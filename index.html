@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WA Store</title>
+  <meta name="description" content="Toko online pesan lewat WhatsApp dan Telegram." />
+  <style>
+:root {
+  --primary: #0f8f5a;
+  --primary-dark: #0b6e45;
+  --bg: #fafaf7;
+  --card: #ffffff;
+  --text: #1f2a24;
+  --muted: #6b7a72;
+  --border: #e4e8e3;
+  --danger: #b91c1c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 20px; background: rgba(255,255,255,.92);
+  border-bottom: 1px solid var(--border); backdrop-filter: blur(6px);
+}
+.brand { font-weight: 700; display: flex; gap: 8px; align-items: center; }
+.logo {
+  display: inline-flex; width: 30px; height: 30px; border-radius: 8px;
+  background: var(--primary); color: #fff; align-items: center; justify-content: center; font-weight: 800;
+}
+nav { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+nav a:hover { color: var(--primary); }
+.cart-link span {
+  background: var(--primary); color: #fff; border-radius: 999px; padding: 0 7px; font-size: 12px;
+}
+
+main { max-width: 1040px; margin: 0 auto; padding: 24px 20px 60px; min-height: 70vh; }
+.footer { text-align: center; color: var(--muted); font-size: 13px; padding: 24px; border-top: 1px solid var(--border); }
+.muted { color: var(--muted); }
+.error { color: var(--danger); font-weight: 600; }
+.ok { color: var(--primary-dark); font-weight: 600; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  border: 0; border-radius: 12px; padding: 11px 18px; font-size: 15px; font-weight: 600;
+  background: var(--primary); color: #fff; cursor: pointer; text-decoration: none;
+}
+.btn:hover { background: var(--primary-dark); }
+.btn.outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+.btn.telegram { background: #2b7bd6; }
+.btn.small { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.hero { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; padding: 40px 0; }
+.hero h1 { font-size: 44px; line-height: 1.1; margin: 12px 0; }
+.hero h1 em { font-style: normal; color: var(--primary); }
+.pill { display: inline-block; background: #e8f5ee; color: var(--primary-dark); border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+.mock { background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 18px; box-shadow: 0 12px 30px rgba(0,0,0,.06); max-width: 380px; margin-left: auto; }
+.mock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.mock-grid div { background: #f1f6f2; border-radius: 12px; padding: 10px; font-size: 12px; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 36px 0; }
+.steps div { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+.steps b { display: inline-flex; width: 26px; height: 26px; border-radius: 8px; background: var(--primary); color: #fff; align-items: center; justify-content: center; }
+
+.store-head { display: flex; gap: 14px; align-items: center; margin-bottom: 18px; }
+.avatar {
+  width: 56px; height: 56px; border-radius: 16px; background: #e8f5ee; color: var(--primary-dark);
+  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; flex-shrink: 0;
+}
+.store-head h1 { margin: 0; font-size: 26px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.card .thumb { aspect-ratio: 1 / 1; border-radius: 12px; background: #eef2ef; object-fit: cover; width: 100%; }
+.card h3 { font-size: 15px; margin: 4px 0 0; }
+.price { color: var(--primary-dark); font-weight: 700; }
+.price s { color: var(--muted); font-weight: 400; margin-right: 6px; }
+.stock { font-size: 12px; color: var(--muted); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 22px; }
+.two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22px; align-items: start; }
+label { display: block; font-size: 14px; font-weight: 600; margin: 12px 0 6px; }
+input, textarea, select {
+  width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 12px; font: inherit; background: #fff;
+}
+textarea { min-height: 80px; }
+.row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+.line { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 14px; }
+.line.total { font-weight: 800; font-size: 16px; border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; }
+.pre { white-space: pre-wrap; background: #f5f7f5; border-radius: 12px; padding: 12px; font-size: 14px; font-family: inherit; }
+.order-no { font-family: ui-monospace, monospace; font-size: 20px; font-weight: 800; background: #f1f6f2; border: 1px dashed var(--primary); border-radius: 12px; padding: 10px 14px; display: inline-block; margin: 8px 0; }
+.team { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+.team .person { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 16px; text-align: center; }
+.team .person img { width: 96px; height: 96px; margin: 0 auto 8px; }
+.team .person small { color: var(--muted); }
+.badge { display: inline-block; font-size: 11px; background: #fff4e0; color: #8a5a00; border-radius: 999px; padding: 2px 8px; margin-top: 6px; }
+
+@media (max-width: 760px) {
+  .hero, .two-col { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 34px; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .mock { margin: 0; }
+}
+
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <span class="logo">W</span> WA Store
+    </a>
+    <nav>
+      <a href="#/toko/toko-maju">Demo</a>
+      <a href="#/tim">Tim Agen</a>
+      <a href="#/daftar" class="btn small">Daftar</a>
+      <a href="#/keranjang" class="cart-link">Keranjang <span id="cart-count">0</span></a>
+    </nav>
+  </header>
+  <main id="app"><p class="muted">Memuat…</p></main>
+  <footer class="footer">WA Store · toko online untuk WhatsApp &amp; Telegram</footer>
+  <script>
+/* WA Store — aplikasi statis (tanpa Lovable). Terhubung ke Supabase "Store front".
+ * Hanya memakai kunci publik. Semua akses dibatasi RLS dan hak akses kolom di database. */
+
+const SUPABASE_URL = "https://sbckrsqfyukpemzvvdtt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_eQWhcZd_QpYvy3m68ovdAg_9ZKIWYRr";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true },
+});
+
+const app = document.getElementById("app");
+const CART_KEY = "wastore-cart";
+const MAX_PROOF_BYTES = 5 * 1024 * 1024;
+const PROOF_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+/* ---------- utilitas ---------- */
+const esc = (s) =>
+  String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const rp = (n) => "Rp" + Math.round(Number(n) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const initials = (name) => (name || "T").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+const normPhone = (p) => {
+  const x = String(p || "").replace(/\D/g, "");
+  if (!x) return "";
+  if (x.startsWith("620")) return "62" + x.slice(3);
+  if (x.startsWith("62")) return x;
+  if (x.startsWith("0")) return "62" + x.slice(1);
+  if (x.startsWith("8")) return "62" + x;
+  return x;
+};
+const waLink = (num, text) => {
+  const n = normPhone(num);
+  return n ? `https://wa.me/${n}?text=${encodeURIComponent(text)}` : null;
+};
+const setView = (html) => { app.innerHTML = html; window.scrollTo(0, 0); };
+const toast = (msg, cls = "ok") => {
+  const el = document.getElementById("msg");
+  if (el) { el.className = cls; el.textContent = msg; }
+};
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* ---------- keranjang (disimpan di browser) ---------- */
+const getCart = () => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; } };
+const saveCart = (items) => { localStorage.setItem(CART_KEY, JSON.stringify(items)); updateCartCount(); };
+const updateCartCount = () => {
+  const n = getCart().reduce((a, i) => a + Number(i.qty || 0), 0);
+  const el = document.getElementById("cart-count");
+  if (el) el.textContent = n;
+};
+const addToCart = (item) => {
+  const items = getCart();
+  const hit = items.find((i) => i.slug === item.slug && i.product_id === item.product_id && i.variant === item.variant);
+  if (hit) hit.qty += item.qty; else items.push(item);
+  saveCart(items);
+};
+
+/* ---------- data ---------- */
+async function getStore(slug) {
+  const { data, error } = await sb
+    .from("stores")
+    .select("id,name,slug,description,location,logo_url,whatsapp_number,telegram_username,payment_accounts,payment_note")
+    .eq("slug", slug).eq("is_active", true).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+async function getProducts(storeId) {
+  const { data, error } = await sb
+    .from("products")
+    .select("id,name,slug,description,image_url,price,sale_price,stock,variants")
+    .eq("store_id", storeId).eq("is_active", true).order("name");
+  if (error) throw error;
+  return data || [];
+}
+const productImg = (p) => p.image_url || "";
+
+/* ---------- halaman ---------- */
+function renderHome() {
+  setView(`
+    <section class="hero">
+      <div>
+        <span class="pill">Toko online untuk pedagang</span>
+        <h1>Jual Online. <em>Lebih Mudah.</em></h1>
+        <p class="muted">Buat toko online dalam hitungan menit. Pembeli memesan langsung lewat WhatsApp atau Telegram.</p>
+        <div class="row">
+          <a class="btn" href="#/daftar">Mulai Sekarang</a>
+          <a class="btn outline" href="#/toko/toko-maju">Lihat Demo Toko</a>
+        </div>
+        <p class="muted small">Pendaftaran memakai kunci lisensi sekali pakai.</p>
+      </div>
+      <div class="mock">
+        <div class="row"><span class="avatar">TM</span><div><b>Toko Maju</b><div class="muted">Bandung, Indonesia</div></div></div>
+        <div class="mock-grid">
+          <div>Running Shoes<br><b>Rp299.000</b></div>
+          <div>Classic Sneakers<br><b>Rp329.000</b></div>
+          <div>Leather Wallet<br><b>Rp159.000</b></div>
+          <div>Casual T-Shirt<br><b>Rp119.000</b></div>
+        </div>
+        <div class="row" style="margin-top:12px"><span class="btn small">Pesan via WhatsApp</span><span class="btn small telegram">via Telegram</span></div>
+      </div>
+    </section>
+    <section>
+      <h2>Cara kerjanya</h2>
+      <div class="steps">
+        <div><b>1</b><p><strong>Buat toko</strong><br><span class="muted">Daftar dengan kunci lisensi.</span></p></div>
+        <div><b>2</b><p><strong>Tambah produk</strong><br><span class="muted">Nama, harga, stok, dan foto.</span></p></div>
+        <div><b>3</b><p><strong>Bagikan link</strong><br><span class="muted">Sebar link toko Anda.</span></p></div>
+        <div><b>4</b><p><strong>Pesanan masuk</strong><br><span class="muted">Pembeli checkout lewat WA atau Telegram.</span></p></div>
+      </div>
+    </section>
+  `);
+}
+
+async function renderStore(slug) {
+  setView(`<p class="muted">Memuat toko…</p>`);
+  const store = await getStore(slug);
+  if (!store) return setView(`<div class="panel"><h2>Toko tidak ditemukan</h2><p class="muted">Periksa alamat toko, atau toko sedang tidak aktif.</p></div>`);
+  const products = await getProducts(store.id);
+  const wa = waLink(store.whatsapp_number, `Halo ${store.name}, saya mau tanya produk.`);
+  setView(`
+    <div class="store-head">
+      <span class="avatar">${esc(initials(store.name))}</span>
+      <div>
+        <h1>${esc(store.name)}</h1>
+        <div class="muted">${esc(store.location || "")}</div>
+        <p class="muted" style="margin:4px 0 0">${esc(store.description || "")}</p>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:18px">
+      ${wa ? `<a class="btn small" href="${wa}" target="_blank" rel="noopener">Tanya via WhatsApp</a>` : ""}
+      ${store.telegram_username ? `<a class="btn small telegram" href="https://t.me/${esc(store.telegram_username)}" target="_blank" rel="noopener">Telegram</a>` : ""}
+      <a class="btn small outline" href="#/toko/${esc(slug)}/katalog">Katalog agen &amp; distributor</a>
+      <a class="btn small outline" href="#/toko/${esc(slug)}/pesanan">Cek pesanan</a>
+    </div>
+    ${products.length === 0 ? `<p class="muted">Belum ada produk.</p>` : `
+    <div class="grid">
+      ${products.map((p) => `
+        <div class="card">
+          ${productImg(p) ? `<img class="thumb" src="${esc(productImg(p))}" alt="${esc(p.name)}" loading="lazy" />` : `<div class="thumb"></div>`}
+          <h3>${esc(p.name)}</h3>
+          <div class="price">${p.sale_price ? `<s>${rp(p.price)}</s>${rp(p.sale_price)}` : rp(p.price)}</div>
+          <div class="stock">${p.stock > 0 ? `Stok ${p.stock}` : "Stok habis"}</div>
+          <div class="actions">
+            <a class="btn small outline" href="#/toko/${esc(slug)}/produk/${esc(p.slug)}">Detail</a>
+            <button class="btn small" data-add="${esc(p.slug)}" ${p.stock > 0 ? "" : "disabled"}>Tambah</button>
+          </div>
+        </div>`).join("")}
+    </div>`}
+  `);
+  app.querySelectorAll("[data-add]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const p = products.find((x) => x.slug === btn.dataset.add);
+      addToCart({ slug, store_id: store.id, product_id: p.id, name: p.name, variant: "", qty: 1,
+        price: Number(p.sale_price ?? p.price), image: productImg(p) });
+      btn.textContent = "Ditambahkan ✓";
+      setTimeout(() => (btn.textContent = "Tambah"), 1200);
+    });
+  });
+}
+
+async function renderProduct(slug, pslug) {
+  setView(`<p class="muted">Memuat produk…</p>`);
+  const store = await getStore(slug);
+  if (!store) return setView(`<div class="panel">Toko tidak ditemukan.</div>`);
+  const { data: p } = await sb.from("products")
+    .select("id,name,slug,description,image_url,price,sale_price,stock,variants")
+    .eq("store_id", store.id).eq("slug", pslug).eq("is_active", true).maybeSingle();
+  if (!p) return setView(`<div class="panel">Produk tidak ditemukan.</div>`);
+  const variants = Array.isArray(p.variants) ? p.variants : [];
+  const price = Number(p.sale_price ?? p.price);
+  setView(`
+    <div class="two-col">
+      <div class="panel">
+        ${productImg(p) ? `<img class="thumb" src="${esc(productImg(p))}" alt="${esc(p.name)}" style="border-radius:16px" />` : `<div style="aspect-ratio:1/1;background:#eef2ef;border-radius:16px"></div>`}
+      </div>
+      <div class="panel">
+        <a class="muted" href="#/toko/${esc(slug)}">← ${esc(store.name)}</a>
+        <h1 style="margin:8px 0">${esc(p.name)}</h1>
+        <div class="price" style="font-size:22px">${p.sale_price ? `<s>${rp(p.price)}</s>` : ""}${rp(price)}</div>
+        <p class="muted">${esc(p.description || "")}</p>
+        <div class="stock">${p.stock > 0 ? `Stok ${p.stock}` : "Stok habis"}</div>
+        ${variants.length ? `<label>Varian</label><select id="variant">${variants.map((v) => `<option value="${esc(v.name ?? v)}">${esc(v.name ?? v)}</option>`).join("")}</select>` : ""}
+        <label>Jumlah</label>
+        <input id="qty" type="number" min="1" max="${Math.max(1, Math.min(100, p.stock))}" value="1" />
+        <div class="row" style="margin-top:16px">
+          <button class="btn" id="add" ${p.stock > 0 ? "" : "disabled"}>Tambah ke keranjang</button>
+          <a class="btn outline" href="#/keranjang">Lihat keranjang</a>
+        </div>
+        <p id="msg"></p>
+      </div>
+    </div>`);
+  document.getElementById("add").addEventListener("click", () => {
+    const qty = Math.max(1, Math.min(100, parseInt(document.getElementById("qty").value, 10) || 1));
+    const variant = document.getElementById("variant")?.value || "";
+    addToCart({ slug, store_id: store.id, product_id: p.id, name: p.name, variant, qty, price, image: productImg(p) });
+    toast("Ditambahkan ke keranjang.");
+  });
+}
+
+function renderCart(slug) {
+  const items = getCart();
+  const sameStore = slug ? items.filter((i) => i.slug === slug) : items;
+  if (sameStore.length === 0) {
+    return setView(`<div class="panel"><h2>Keranjang kosong</h2><p class="muted">Tambahkan produk dari toko dulu.</p><a class="btn" href="#/toko/toko-maju">Lihat demo toko</a></div>`);
+  }
+  const target = sameStore[0].slug;
+  const subtotal = sameStore.reduce((a, i) => a + i.price * i.qty, 0);
+  setView(`
+    <div class="two-col">
+      <div class="panel">
+        <h2>Keranjang (${esc(target)})</h2>
+        ${sameStore.map((i) => `
+          <div class="line">
+            <span>${esc(i.name)}${i.variant ? ` (${esc(i.variant)})` : ""} <span class="muted">x${i.qty}</span></span>
+            <span><b>${rp(i.price * i.qty)}</b>
+              <button class="btn small outline" data-rm="${esc(i.product_id)}|${esc(i.variant)}">Hapus</button></span>
+          </div>`).join("")}
+        <div class="line total"><span>Subtotal</span><span>${rp(subtotal)}</span></div>
+        <p class="muted small">Total akhir dihitung ulang oleh sistem saat pesanan dibuat.</p>
+        <a class="btn" href="#/toko/${esc(target)}/checkout">Lanjut ke checkout</a>
+      </div>
+    </div>`);
+  app.querySelectorAll("[data-rm]").forEach((b) => b.addEventListener("click", () => {
+    const [pid, variant] = b.dataset.rm.split("|");
+    saveCart(getCart().filter((i) => !(i.product_id === pid && i.variant === variant)));
+    renderCart(slug);
+  }));
+}
+
+async function renderCheckout(slug) {
+  const items = getCart().filter((i) => i.slug === slug);
+  if (items.length === 0) return setView(`<div class="panel"><h2>Keranjang kosong</h2><a class="btn" href="#/toko/${esc(slug)}">Kembali ke toko</a></div>`);
+  const store = await getStore(slug);
+  if (!store) return setView(`<div class="panel">Toko tidak ditemukan.</div>`);
+  const subtotal = items.reduce((a, i) => a + i.price * i.qty, 0);
+  setView(`
+    <div class="two-col">
+      <form class="panel" id="co">
+        <h2>Data pembeli</h2>
+        <label>Nama lengkap *</label><input name="name" required />
+        <label>Nomor WhatsApp / telepon *</label><input name="phone" required inputmode="tel" placeholder="08xxxxxxxxxx" />
+        <label>Alamat pengiriman *</label><textarea name="address" required></textarea>
+        <label>Catatan (opsional)</label><textarea name="notes"></textarea>
+        <label>Ongkir (Rp)</label><input name="shipping" value="0" inputmode="numeric" />
+        <div class="row" style="margin-top:16px"><button class="btn" type="submit" id="send">Buat pesanan</button></div>
+        <p id="msg"></p>
+      </form>
+      <div class="panel">
+        <h2>Ringkasan</h2>
+        ${items.map((i) => `<div class="line"><span>${esc(i.name)}${i.variant ? ` (${esc(i.variant)})` : ""} x${i.qty}</span><span>${rp(i.price * i.qty)}</span></div>`).join("")}
+        <div class="line total"><span>Subtotal</span><span id="sub">${rp(subtotal)}</span></div>
+        <div class="line"><span>Ongkir</span><span id="ship">${rp(0)}</span></div>
+        <div class="line total"><span>Perkiraan total</span><span id="tot">${rp(subtotal)}</span></div>
+        <p class="muted small">Total akhir dihitung ulang oleh sistem dari katalog.</p>
+      </div>
+    </div>`);
+
+  const form = document.getElementById("co");
+  const shipEl = form.elements.shipping;
+  shipEl.addEventListener("input", () => {
+    shipEl.value = shipEl.value.replace(/\D/g, "");
+    const ship = Number(shipEl.value) || 0;
+    document.getElementById("ship").textContent = rp(ship);
+    document.getElementById("tot").textContent = rp(subtotal + ship);
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("send");
+    btn.disabled = true;
+    const fd = new FormData(form);
+    const orderNumber = makeOrderNumber();
+    const shipping = Number(fd.get("shipping")) || 0;
+    // Pesanan dibuat tanpa membaca balik data (pembeli tidak punya hak SELECT pada orders).
+    const { error } = await sb.from("orders").insert({
+      store_id: store.id,
+      order_number: orderNumber,
+      customer_name: String(fd.get("name")).trim().slice(0, 120),
+      customer_phone: String(fd.get("phone")).trim().slice(0, 30),
+      customer_address: String(fd.get("address")).trim().slice(0, 500),
+      notes: String(fd.get("notes") || "").trim().slice(0, 500) || null,
+      channel: "web",
+      total: subtotal + shipping,
+      shipping_fee: shipping,
+      items: items.map((i) => ({ product_id: i.product_id, name: i.name, variant: i.variant, qty: i.qty, price: i.price })),
+      status: "pending",
+    });
+    if (error) {
+      toast(friendlyOrderError(error.message), "error");
+      btn.disabled = false;
+      return;
+    }
+    saveCart(getCart().filter((i) => i.slug !== slug));
+    location.hash = `#/toko/${slug}/sukses?no=${encodeURIComponent(orderNumber)}&telepon=${encodeURIComponent(fd.get("phone"))}`;
+  });
+}
+
+function makeOrderNumber() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let a = "";
+  for (let i = 0; i < 6; i++) a += chars[Math.floor(Math.random() * chars.length)];
+  return `WEB-${a}-${String(Math.floor(1000 + Math.random() * 9000))}`;
+}
+
+function friendlyOrderError(msg) {
+  if (/row-level security/i.test(msg)) return "Toko sedang tidak menerima pesanan.";
+  if (/Terlalu banyak pesanan/i.test(msg)) return "Terlalu banyak pesanan dari nomor ini. Coba lagi nanti.";
+  if (/Terlalu banyak item/i.test(msg)) return "Terlalu banyak item dalam satu pesanan (maksimal 50).";
+  return "Pesanan gagal disimpan. Coba lagi atau hubungi toko.";
+}
+
+async function renderSuccess(slug, no, phone) {
+  setView(`<p class="muted">Memuat pesanan…</p>`);
+  const { data } = await sb.rpc("get_order_status", { p_order_number: no, p_phone: phone });
+  const o = Array.isArray(data) ? data[0] : null;
+  const store = await getStore(slug);
+  const total = o ? rp(o.total) : "akan dikonfirmasi";
+  const waMsg = `Halo ${store?.name || ""}, saya sudah membuat pesanan #${no} (${total}). Mohon konfirmasinya ya.`;
+  const wa = waLink(store?.whatsapp_number, waMsg);
+  setView(`
+    <div class="panel" style="max-width:640px;margin:0 auto;text-align:center">
+      <h1>Pesanan diterima!</h1>
+      <p class="muted">Simpan nomor pesanan ini untuk cek status dan kirim bukti transfer.</p>
+      <div class="order-no">${esc(no)}</div>
+      <p>Total: <b>${esc(total)}</b></p>
+      <div class="panel" style="text-align:left;margin:16px 0">
+        <h3>Instruksi pembayaran</h3>
+        ${store?.payment_accounts ? `<div class="pre">${esc(store.payment_accounts)}</div>` : `<p class="muted">Rekening akan diberikan penjual lewat chat.</p>`}
+        ${store?.payment_note ? `<p class="muted">${esc(store.payment_note)}</p>` : ""}
+      </div>
+      <div class="row" style="justify-content:center">
+        ${wa ? `<a class="btn" href="${wa}" target="_blank" rel="noopener">Konfirmasi via WhatsApp</a>` : ""}
+        <a class="btn outline" href="#/toko/${esc(slug)}/pesanan?no=${encodeURIComponent(no)}&telepon=${encodeURIComponent(phone)}">Cek status &amp; kirim bukti</a>
+      </div>
+    </div>`);
+}
+
+async function renderOrderStatus(slug, no, phone) {
+  setView(`
+    <div class="panel" style="max-width:640px;margin:0 auto">
+      <h1>Cek status pesanan</h1>
+      <form id="lookup">
+        <label>Nomor pesanan</label><input name="no" required value="${esc(no || "")}" placeholder="WEB-XXXXXX-XXXX" />
+        <label>Nomor telepon</label><input name="phone" required inputmode="tel" value="${esc(phone || "")}" />
+        <div class="row" style="margin-top:14px"><button class="btn" type="submit">Cari pesanan</button></div>
+      </form>
+      <div id="result" style="margin-top:18px"></div>
+    </div>`);
+  const form = document.getElementById("lookup");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await showOrder(slug, form.elements.no.value.trim(), form.elements.phone.value.trim());
+  });
+  if (no && phone) await showOrder(slug, no, phone);
+}
+
+async function showOrder(slug, no, phone) {
+  const out = document.getElementById("result");
+  out.innerHTML = `<p class="muted">Mencari…</p>`;
+  const { data, error } = await sb.rpc("get_order_status", { p_order_number: no, p_phone: phone });
+  if (error) { out.innerHTML = `<p class="error">Gagal memuat pesanan. Coba lagi.</p>`; return; }
+  const o = Array.isArray(data) ? data[0] : null;
+  if (!o) { out.innerHTML = `<p class="error">Pesanan tidak ditemukan. Pastikan nomor pesanan dan telepon sesuai.</p>`; return; }
+  const items = Array.isArray(o.items) ? o.items : [];
+  const canUpload = ["pending", "contacted"].includes(String(o.status).toLowerCase()) && !o.payment_proof_url;
+  const store = await getStore(slug);
+  out.innerHTML = `
+    <div class="line"><b>${esc(o.order_number)}</b><span>${esc(o.status)}</span></div>
+    ${items.map((i) => `<div class="line"><span>${esc(i.name)}${i.variant ? ` (${esc(i.variant)})` : ""} x${esc(i.qty)}</span><span>${rp(i.price * i.qty)}</span></div>`).join("")}
+    <div class="line"><span>Ongkir</span><span>${rp(o.shipping_fee)}</span></div>
+    <div class="line total"><span>Total</span><span>${rp(o.total)}</span></div>
+    ${o.tracking_number ? `<p>Resi: <b>${esc(o.tracking_number)}</b> ${o.tracking_status ? `(${esc(o.tracking_status)})` : ""}</p>` : ""}
+    ${o.payment_proof_url ? `<p class="ok">Bukti transfer sudah dikirim. Penjual akan memverifikasi.</p>` : ""}
+    ${canUpload ? `
+      <h3>Kirim bukti transfer</h3>
+      <p class="muted small">JPG, PNG, atau WEBP, maksimal 5 MB. Batas 3 kali unggah per pesanan.</p>
+      <input type="file" id="proof" accept="image/jpeg,image/png,image/webp" />
+      <div class="row" style="margin-top:10px"><button class="btn" id="upload">Unggah bukti</button></div>
+      <p id="msg"></p>` : ""}
+  `;
+  if (canUpload) {
+    document.getElementById("upload").addEventListener("click", () => uploadProof(store, o, phone));
+  }
+}
+
+async function uploadProof(store, o, phone) {
+  const file = document.getElementById("proof").files[0];
+  if (!file) return toast("Pilih berkas dulu.", "error");
+  if (file.size > MAX_PROOF_BYTES) return toast("Ukuran berkas melebihi 5 MB.", "error");
+  if (!PROOF_TYPES.includes(file.type)) return toast("Format harus JPG, PNG, atau WEBP.", "error");
+  const btn = document.getElementById("upload");
+  btn.disabled = true;
+  toast("Mengunggah…");
+  try {
+    const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-60);
+    const path = `${store.id}/${o.order_number}/${Date.now()}-${safe}`;
+    const up = await sb.storage.from("payment-proofs").upload(path, file, { upsert: false });
+    if (up.error) throw up.error;
+    const { error } = await sb.rpc("attach_payment_proof", { p_order_number: o.order_number, p_phone: phone, p_path: path });
+    if (error) throw error;
+    toast("Bukti transfer berhasil dikirim ke penjual.");
+    await sleep(600);
+    await showOrder(store.slug, o.order_number, phone);
+  } catch (err) {
+    toast(err.message || "Gagal mengirim bukti transfer.", "error");
+    btn.disabled = false;
+  }
+}
+
+async function renderCatalog(slug) {
+  setView(`
+    <div class="panel" style="max-width:720px;margin:0 auto">
+      <h1>Katalog agen &amp; distributor</h1>
+      <p class="muted">Masukkan password katalog dari penjual untuk melihat harga khusus.</p>
+      <form id="cat">
+        <label>Password katalog</label><input type="password" name="pw" autocomplete="off" />
+        <div class="row" style="margin-top:12px">
+          <button class="btn" type="submit">Buka katalog</button>
+          <button class="btn outline" type="button" id="umum">Lihat harga umum</button>
+        </div>
+      </form>
+      <div id="rows" style="margin-top:16px"></div>
+    </div>`);
+  const load = async (pw) => {
+    const out = document.getElementById("rows");
+    out.innerHTML = `<p class="muted">Memuat…</p>`;
+    const { data, error } = await sb.rpc("get_catalog", { p_store_slug: slug, p_password: pw || null });
+    if (error) { out.innerHTML = `<p class="error">${esc(error.message)}</p>`; return; }
+    const rows = data || [];
+    const tier = rows[0]?.tier || "umum";
+    const label = { umum: "Harga umum", agen: "Harga agen", distributor: "Harga distributor" }[tier] || tier;
+    out.innerHTML = `
+      ${pw && tier === "umum" ? `<p class="error">Password tidak cocok. Menampilkan harga umum.</p>` : `<p class="ok">${esc(label)}</p>`}
+      ${rows.map((r) => `<div class="line"><span>${esc(r.name)} <span class="muted">stok ${esc(r.stock)}</span></span><b>${rp(r.price)}</b></div>`).join("") || `<p class="muted">Katalog kosong.</p>`}`;
+  };
+  document.getElementById("cat").addEventListener("submit", (e) => {
+    e.preventDefault();
+    load(e.target.elements.pw.value.trim());
+  });
+  document.getElementById("umum").addEventListener("click", () => load(null));
+}
+
+async function renderTeam() {
+  setView(`<p class="muted">Memuat tim…</p>`);
+  const { data, error } = await sb.from("agent_team")
+    .select("name,role,description,gender,status,avatar_svg,sort_order").order("sort_order");
+  if (error) return setView(`<p class="error">Gagal memuat tim.</p>`);
+  setView(`
+    <h1>Tim agen</h1>
+    <p class="muted">Asisten otomatis yang membantu toko Anda bekerja setiap hari.</p>
+    <div class="team">
+      ${(data || []).map((p) => `
+        <div class="person">
+          <img src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(p.avatar_svg)}" alt="${esc(p.name)}" />
+          <b>${esc(p.name)}</b><br><small>${esc(p.role)}</small>
+          <p class="muted small">${esc(p.description)}</p>
+          ${p.status !== "aktif" ? `<span class="badge">menunggu aktivasi</span>` : ""}
+        </div>`).join("")}
+    </div>`);
+}
+
+async function renderDaftar() {
+  const { data: sess } = await sb.auth.getSession();
+  if (!sess.session) {
+    setView(`
+      <div class="panel" style="max-width:520px;margin:0 auto">
+        <h1>Daftar pemilik toko</h1>
+        <p class="muted">Langkah 1: buat akun. Setelah itu masukkan kunci lisensi untuk membuat toko.</p>
+        <form id="signup">
+          <label>Email</label><input name="email" type="email" required />
+          <label>Password (minimal 8 karakter)</label><input name="password" type="password" minlength="8" required />
+          <div class="row" style="margin-top:14px"><button class="btn" type="submit">Buat akun</button></div>
+        </form>
+        <p class="muted small">Sudah punya akun? <a href="#/masuk">Masuk</a></p>
+        <p id="msg"></p>
+      </div>`);
+    document.getElementById("signup").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const { data, error } = await sb.auth.signUp({ email: f.email.value.trim(), password: f.password.value });
+      if (error) return toast(error.message, "error");
+      if (data.session) return renderDaftar();
+      toast("Akun dibuat. Cek email untuk konfirmasi, lalu masuk di halaman Masuk.");
+    });
+    return;
+  }
+  setView(`
+    <div class="panel" style="max-width:520px;margin:0 auto">
+      <h1>Aktifkan toko</h1>
+      <p class="muted">Masukkan kunci lisensi sekali pakai untuk membuat toko.</p>
+      <form id="claim">
+        <label>Kunci lisensi</label><input name="code" required placeholder="XXX-XXXX-XXXX-XXXX" />
+        <label>Nama toko</label><input name="store" required />
+        <label>Alamat toko (huruf, angka, tanda minus)</label><input name="slug" required placeholder="toko-saya" />
+        <label>Nomor WhatsApp toko</label><input name="wa" inputmode="tel" />
+        <div class="row" style="margin-top:14px"><button class="btn" type="submit">Buat toko</button></div>
+      </form>
+      <p id="msg"></p>
+    </div>`);
+  document.getElementById("claim").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const { data, error } = await sb.rpc("claim_store_license", {
+      p_code: f.code.value.trim(), p_store_name: f.store.value.trim(),
+      p_slug: f.slug.value.trim(), p_whatsapp: f.wa.value.trim(),
+    });
+    if (error) return toast(error.message, "error");
+    toast("Toko berhasil dibuat.");
+    await sleep(800);
+    location.hash = `#/toko/${f.slug.value.trim().toLowerCase()}`;
+  });
+}
+
+/* ---------- router ---------- */
+async function route() {
+  updateCartCount();
+  const raw = (location.hash || "#/").slice(1);
+  const [path, qs] = raw.split("?");
+  const q = new URLSearchParams(qs || "");
+  const parts = path.split("/").filter(Boolean);
+  try {
+    if (parts.length === 0) return renderHome();
+    if (parts[0] === "tim") return renderTeam();
+    if (parts[0] === "daftar") return renderDaftar();
+    if (parts[0] === "masuk") return renderMasuk();
+    if (parts[0] === "keranjang") return renderCart(null);
+    if (parts[0] === "toko" && parts[1]) {
+      const slug = parts[1];
+      if (parts.length === 2) return renderStore(slug);
+      if (parts[2] === "produk" && parts[3]) return renderProduct(slug, parts[3]);
+      if (parts[2] === "keranjang") return renderCart(slug);
+      if (parts[2] === "checkout") return renderCheckout(slug);
+      if (parts[2] === "sukses") return renderSuccess(slug, q.get("no") || "", q.get("telepon") || "");
+      if (parts[2] === "pesanan") return renderOrderStatus(slug, q.get("no") || "", q.get("telepon") || "");
+      if (parts[2] === "katalog") return renderCatalog(slug);
+    }
+    setView(`<div class="panel">Halaman tidak ditemukan. <a href="#/">Kembali</a></div>`);
+  } catch (err) {
+    setView(`<div class="panel"><p class="error">Terjadi kesalahan: ${esc(err.message || err)}</p><a href="#/">Kembali</a></div>`);
+  }
+}
+
+function renderMasuk() {
+  setView(`
+    <div class="panel" style="max-width:420px;margin:0 auto">
+      <h1>Masuk</h1>
+      <form id="login">
+        <label>Email</label><input name="email" type="email" required />
+        <label>Password</label><input name="password" type="password" required />
+        <div class="row" style="margin-top:14px"><button class="btn" type="submit">Masuk</button></div>
+      </form>
+      <p id="msg"></p>
+    </div>`);
+  document.getElementById("login").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const { error } = await sb.auth.signInWithPassword({ email: f.email.value.trim(), password: f.password.value });
+    if (error) return toast(error.message, "error");
+    location.hash = "#/daftar";
+  });
+}
+
+window.addEventListener("hashchange", route);
+route();
+
+</script>
+</body>
+</html>
