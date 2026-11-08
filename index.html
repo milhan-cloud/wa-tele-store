@@ -545,7 +545,8 @@ async function renderStore(slug) {
     <div class="row" style="margin-bottom:18px">
       ${wa ? `<a class="btn small wa" href="${wa}" target="_blank" rel="noopener">Tanya via WhatsApp</a>` : ""}
       ${store.telegram_username ? `<a class="btn small telegram" href="https://t.me/${esc(store.telegram_username)}" target="_blank" rel="noopener">Telegram</a>` : ""}
-      <a class="btn small outline" href="#/toko/${esc(slug)}/katalog">Katalog agen &amp; distributor</a>
+      <a class="btn small outline" href="#/toko/${esc(slug)}/agen">Agen</a>
+      <a class="btn small outline" href="#/toko/${esc(slug)}/distributor">Distributor</a>
       <a class="btn small outline" href="#/toko/${esc(slug)}/pesanan">Cek pesanan</a>
     </div>
     ${products.length === 0 ? `<p class="muted">Belum ada produk.</p>` : `
@@ -1245,7 +1246,7 @@ async function renderDashboard(sub = "") {
   const s = stores[0];
   const { data: isAdmin } = await sb.rpc("is_platform_admin");
   const items = [["produk", "Produk", "▦"], ["pesanan", "Pesanan", "🧾"], ["pelanggan", "Pelanggan", "👥"],
-    ["pengaturan", "Pengaturan toko", "⚙"], ["agen", "Agen & laporan", "✦"]];
+    ["pengaturan", "Pengaturan toko", "⚙"], ["tier", "Agen & distributor", "◈"], ["agen", "Agen & laporan", "✦"]];
   const active = items.find(([k]) => k === sub) ? sub : "agen";
   setView(`
     ${isAdmin ? `<div class="panel" style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span>Anda masuk sebagai <b>admin platform</b>.</span><a class="btn small" href="#/admin">Buka panel admin</a></div>` : ""}
@@ -1257,7 +1258,7 @@ async function renderDashboard(sub = "") {
       <nav class="dnav">${items.map(([k, l, i]) => `<a href="#/dashboard/${k}" class="${k === active ? "on" : ""}"><span>${i}</span>${l}</a>`).join("")}</nav>
       <div id="dashbody"><p class="muted">Memuat…</p></div>
     </div>`);
-  const pages = { produk: pageProduk, pesanan: pagePesanan, pelanggan: pagePelanggan, pengaturan: pagePengaturan, agen: pageAgen };
+  const pages = { produk: pageProduk, pesanan: pagePesanan, pelanggan: pagePelanggan, pengaturan: pagePengaturan, tier: pageTier, agen: pageAgen };
   await pages[active](s);
   if (active === "agen") await agentChatPanel(s);
 }
@@ -1494,6 +1495,121 @@ async function pagePengaturan(s) {
   });
 }
 
+
+/* ---------- halaman Agen & Distributor di toko (dibuka dengan password) ---------- */
+async function renderTierPage(slug, tier) {
+  const store = await getStore(slug);
+  const name = store ? store.name : "Toko";
+  const title = tier === "agen" ? "Agen" : "Distributor";
+  const blurb = tier === "agen" ? "Harga khusus agen dan reward untuk Anda." : "Harga khusus distributor dan reward untuk Anda.";
+  setView(`
+    <section class="cathead">
+      <div class="catleft"><div class="tierbig">${tier === "agen" ? "🤝" : "🚚"}</div></div>
+      <div class="catright">
+        <h1 class="cattitle"><span>${esc(title)}</span> ${esc(name)}</h1>
+        <p class="muted">${esc(blurb)} Masukkan password ${esc(title.toLowerCase())} dari penjual.</p>
+        <form id="tierf" class="catform">
+          <label>Password ${esc(title)}</label>
+          <div class="pwwrap">
+            <span class="pwlock">${"🔒"}</span>
+            <input type="password" name="pw" autocomplete="off" placeholder="Masukkan password di sini..." />
+          </div>
+          <div class="row" style="margin-top:14px"><button class="btn catbtn" type="submit">Buka ${esc(title)}</button></div>
+        </form>
+        <p id="tiermsg"></p>
+      </div>
+    </section>
+    <section id="tierbody"></section>`);
+
+  document.getElementById("tierf").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pw = e.target.elements.pw.value.trim();
+    const out = document.getElementById("tierbody");
+    const msg = document.getElementById("tiermsg");
+    msg.innerHTML = "";
+    out.innerHTML = `<p class="muted">Memuat…</p>`;
+    const { data: r, error: e1 } = await sb.rpc("get_tier_reward", { p_store_slug: slug, p_password: pw });
+    if (e1) { out.innerHTML = ""; return (msg.innerHTML = `<span class="error">${esc(e1.message)}</span>`); }
+    const row = (r || [])[0];
+    if (!row) { out.innerHTML = ""; return (msg.innerHTML = `<span class="error">Password tidak cocok.</span>`); }
+    if (row.tier !== tier) { out.innerHTML = ""; return (msg.innerHTML = `<span class="error">Password ini bukan untuk ${esc(title.toLowerCase())}.</span>`); }
+    const { data: prods } = await sb.rpc("get_catalog", { p_store_slug: slug, p_password: pw });
+    const rows = prods || [];
+    out.innerHTML = `
+      <div class="tierbar"><span class="tierl">${esc(title)} · ${tier === "agen" ? "Harga Agen" : "Harga Distributor"}</span>
+        <span class="tierr">★ Harga khusus untuk Anda</span></div>
+      <div class="catlist panel" style="padding:0;overflow:hidden">
+        ${rows.map((x) => `
+          <div class="prow">
+            <div class="pleft">
+              ${x.image_url ? `<img class="pthumb" src="${esc(x.image_url)}" alt="${esc(x.name)}" loading="lazy" />` : `<span class="ph">${productIcon(x.name)}</span>`}
+              <span class="pname">${esc(x.name)} <small>stok: ${esc(x.stock)}</small></span>
+            </div>
+            <b class="pprice">${rp(x.price)}</b>
+          </div>`).join("") || `<p class="muted" style="padding:16px">Belum ada produk.</p>`}
+      </div>
+      <div class="panel" style="margin-top:18px"><h2>Reward ${esc(title)}</h2>
+        <div class="pre">${row.reward ? esc(row.reward) : "Belum ada reward yang ditulis penjual."}</div>
+      </div>`;
+  });
+}
+
+
+async function pageTier(s) {
+  const [{ data: prods }, { data: tp }, { data: st }] = await Promise.all([
+    sb.from("products").select("id,name,price,sale_price,stock").eq("store_id", s.id).order("name"),
+    sb.from("product_tier_prices").select("product_id,agen_price,distributor_price").eq("store_id", s.id),
+    sb.from("stores").select("reward_agen,reward_distributor").eq("id", s.id).maybeSingle(),
+  ]);
+  const P = prods || [];
+  const T = Object.fromEntries((tp || []).map((x) => [x.product_id, x]));
+  dashPut(`
+    <div class="panel"><h2>Harga agen & distributor</h2>
+      <p class="muted small">Kosongkan jika tidak ada harga khusus. Pembeli umum tetap melihat harga normal.</p>
+      <form id="tf">
+        <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Produk</th><th>Harga umum</th><th>Harga agen (Rp)</th><th>Harga distributor (Rp)</th></tr></thead>
+        <tbody>${P.map((p) => `<tr data-p="${p.id}">
+          <td>${esc(p.name)}</td><td>${rp(p.sale_price ?? p.price)}</td>
+          <td><input type="number" min="0" name="a_${p.id}" value="${esc(T[p.id]?.agen_price ?? "")}" style="max-width:160px" /></td>
+          <td><input type="number" min="0" name="d_${p.id}" value="${esc(T[p.id]?.distributor_price ?? "")}" style="max-width:160px" /></td>
+        </tr>`).join("") || `<tr><td colspan="4" class="muted">Tambahkan produk dulu di menu Produk.</td></tr>`}</tbody></table></div>
+        <div class="row"><button class="btn" type="submit">Simpan harga</button></div>
+      </form>
+      <p id="msgt"></p>
+    </div>
+    <div class="panel" style="margin-top:18px"><h2>Reward</h2>
+      <p class="muted small">Ditampilkan kepada agen atau distributor setelah mereka membuka halamannya dengan password.</p>
+      <form id="rf">
+        <label>Reward agen</label><textarea name="ra" placeholder="mis. Bonus 5% tiap bulan untuk pembelian di atas 10 pcs">${esc(st?.reward_agen || "")}</textarea>
+        <label>Reward distributor</label><textarea name="rd" placeholder="mis. Bonus 8% dan gratis ongkir untuk pembelian di atas 50 pcs">${esc(st?.reward_distributor || "")}</textarea>
+        <div class="row"><button class="btn" type="submit">Simpan reward</button></div>
+      </form>
+      <p id="msgr"></p>
+    </div>`);
+
+  document.getElementById("tf").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const rows = P.map((p) => {
+      const a = f.elements[`a_${p.id}`].value, d = f.elements[`d_${p.id}`].value;
+      return { product_id: p.id, store_id: s.id, agen_price: a === "" ? null : Number(a), distributor_price: d === "" ? null : Number(d), updated_at: new Date().toISOString() };
+    }).filter((r) => r.agen_price !== null || r.distributor_price !== null);
+    const removed = P.filter((p) => !rows.find((r) => r.product_id === p.id) && T[p.id]).map((p) => p.id);
+    if (removed.length) await sb.from("product_tier_prices").delete().in("product_id", removed).eq("store_id", s.id);
+    if (rows.length) {
+      const { error: e2 } = await sb.from("product_tier_prices").upsert(rows, { onConflict: "product_id" });
+      if (e2) return (document.getElementById("msgt").innerHTML = `<span class="error">${esc(e2.message)}</span>`);
+    }
+    document.getElementById("msgt").innerHTML = `<span class="ok">Harga tersimpan.</span>`;
+  });
+
+  document.getElementById("rf").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const { error: e3 } = await sb.from("stores").update({ reward_agen: f.ra.value.trim() || null, reward_distributor: f.rd.value.trim() || null }).eq("id", s.id);
+    document.getElementById("msgr").innerHTML = e3 ? `<span class="error">${esc(e3.message)}</span>` : `<span class="ok">Reward tersimpan.</span>`;
+  });
+}
 /* ---------- bundling / upsell di halaman produk ---------- */
 async function loadBundles(p, slug, storeId) {
   const host = document.getElementById("bundle");
@@ -1679,6 +1795,8 @@ async function route() {
       if (parts[2] === "sukses") return renderSuccess(slug, q.get("no") || "", q.get("telepon") || "");
       if (parts[2] === "pesanan") return renderOrderStatus(slug, q.get("no") || "", q.get("telepon") || "");
       if (parts[2] === "katalog") return renderCatalog(slug);
+      if (parts[2] === "agen") return renderTierPage(slug, "agen");
+      if (parts[2] === "distributor") return renderTierPage(slug, "distributor");
     }
     setView(`<div class="panel">Halaman tidak ditemukan. <a href="#/">Kembali</a></div>`);
   } catch (err) {
