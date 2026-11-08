@@ -396,7 +396,6 @@ input[type="checkbox"] { accent-color: var(--gold); width: 18px; height: 18px; }
       <a href="#/tim">Tim Agen</a>
       <a href="#/dashboard">Dashboard</a>
       <a href="#/masuk">Masuk</a>
-      <a href="#/admin">Admin</a>
       <a href="#/daftar" class="btn small">Daftar</a>
       <a href="#/keranjang" class="cart-link">Keranjang <span id="cart-count">0</span></a>
     </nav>
@@ -1012,6 +1011,29 @@ async function openAgent(p) {
   ov.querySelectorAll("a").forEach((x) => x.addEventListener("click", close));
 }
 
+function renderMasuk() {
+  setView(`
+    <div class="panel narrow">
+      <h1>Masuk</h1>
+      <p class="muted">Masuk dengan username dan password Anda. Pemilik toko dan admin masuk di sini.</p>
+      <form id="login">
+        <label>Username</label><input name="username" required autocomplete="username" />
+        <label>Password</label><input name="password" type="password" required autocomplete="current-password" />
+        <div class="row"><button class="btn" type="submit">Masuk</button></div>
+      </form>
+      <p class="muted small">Belum punya toko? <a href="#/daftar" style="color:var(--gold-2)">Daftar dengan kunci lisensi</a></p>
+      <p id="msg"></p>
+    </div>`);
+  document.getElementById("login").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const { error } = await sb.auth.signInWithPassword({ email: toEmail(f.username.value), password: f.password.value });
+    if (error) return toast(friendlyAuth(error.message), "error");
+    const { data: isAdmin } = await sb.rpc("is_platform_admin");
+    location.hash = isAdmin ? "#/admin" : "#/dashboard";
+  });
+}
+
 async function renderDaftar() {
   const { data: sess } = await sb.auth.getSession();
   if (sess.session) return renderKlaimToko();
@@ -1183,7 +1205,9 @@ async function renderDashboard() {
   if (error) return setView(`<p class="error">${esc(error.message)}</p>`);
   if (!stores || !stores.length) return setView(`<div class="panel narrow"><h2>Belum ada toko</h2><p class="muted">Aktifkan toko dengan kunci lisensi.</p><a class="btn" href="#/daftar">Aktifkan toko</a></div>`);
   const s = stores[0];
+  const { data: isAdmin } = await sb.rpc("is_platform_admin");
   setView(`
+    ${isAdmin ? `<div class="panel" style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span>Anda masuk sebagai <b>admin platform</b>.</span><a class="btn small" href="#/admin">Buka panel admin</a></div>` : ""}
     <div class="store-head">
       <span class="avatar">${esc(initials(s.name))}</span>
       <div><h1>${esc(s.name)}</h1><div class="muted">Dashboard pemilik · <a href="#/toko/${esc(s.slug)}" style="color:var(--gold-2)">lihat toko</a></div></div>
