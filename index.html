@@ -1413,7 +1413,7 @@ async function pagePelanggan(s) {
 
 async function pagePengaturan(s) {
   const { data: t, error } = await sb.from("stores")
-    .select("description,location,couriers,payment_methods,payment_note,whatsapp_number,origin_area_id,origin_area_name").eq("id", s.id).maybeSingle();
+    .select("name,description,location,couriers,payment_methods,payment_note,whatsapp_number,origin_area_id,origin_area_name").eq("id", s.id).maybeSingle();
   if (error) return dashPut(`<p class="error">${esc(error.message)}</p>`);
   const couriers = Array.isArray(t?.couriers) ? t.couriers : [];
   const methods = Array.isArray(t?.payment_methods) ? t.payment_methods : [];
@@ -1423,6 +1423,8 @@ async function pagePengaturan(s) {
     <div class="panel">
       <h2>Profil toko</h2>
       <form id="sf">
+        <label>Nama toko *</label><input name="store_name" required value="${esc(t?.name || "")}" />
+        <p class="muted small">Alamat link toko tidak ikut berubah. Hanya nama yang tampil di halaman dan dashboard.</p>
         <label>Deskripsi</label><textarea name="description">${esc(t?.description || "")}</textarea>
         <label>Lokasi</label><input name="location" value="${esc(t?.location || "")}" />
         <label>Nomor WhatsApp toko</label><input name="whatsapp_number" value="${esc(t?.whatsapp_number || "")}" />
@@ -1478,7 +1480,10 @@ async function pagePengaturan(s) {
     const f = e.target;
     const cs = [...document.querySelectorAll(".rowc")].map((r) => ({ name: r.querySelector('[name="cname"]').value.trim(), fee: Number(r.querySelector('[name="cfee"]').value) || 0 })).filter((c) => c.name);
     const ms = [...document.querySelectorAll(".rowm")].map((r) => ({ type: "transfer", label: r.querySelector('[name="mlabel"]').value.trim(), account: r.querySelector('[name="maccount"]').value.trim() })).filter((m) => m.label);
+    const newName = f.store_name.value.trim();
+    if (!newName) return (document.getElementById("msgs").innerHTML = `<span class="error">Nama toko tidak boleh kosong.</span>`);
     const { error: e2 } = await sb.from("stores").update({
+      name: newName,
       description: f.description.value.trim() || null, location: f.location.value.trim() || null,
       whatsapp_number: f.whatsapp_number.value.trim() || null, couriers: cs, payment_methods: ms,
       payment_note: f.payment_note.value.trim() || null,
