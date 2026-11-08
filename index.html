@@ -397,6 +397,26 @@ input[type="checkbox"] { accent-color: var(--gold); width: 18px; height: 18px; }
 @media (max-width: 900px) { .dash { grid-template-columns: 1fr; } .dnav { position: static; flex-direction: row; overflow-x: auto; } .dnav a { white-space: nowrap; } }
 @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
 
+/* ---------- kolom isian: putih dengan teks hitam ---------- */
+input, textarea, select {
+  background: #ffffff !important; color: #111 !important; border: 1px solid #d6dbe3 !important;
+}
+input::placeholder, textarea::placeholder { color: #8a93a3 !important; }
+input:focus, textarea:focus, select:focus { border-color: var(--gold) !important; box-shadow: 0 0 0 4px rgba(231,183,90,.22) !important; }
+input[type="checkbox"], input[type="radio"] { background: initial !important; color: initial !important; border: initial !important; }
+
+/* ---------- tombol + unggah gambar ---------- */
+.uptile { display: flex; align-items: center; gap: 14px; padding: 12px; border: 2px dashed rgba(231,183,90,.55); border-radius: 16px; background: rgba(5,10,22,.5); cursor: pointer; margin: 10px 0; flex-wrap: wrap; }
+.uptile:hover { border-color: var(--gold); background: rgba(231,183,90,.06); }
+.upprev { width: 84px; height: 84px; border-radius: 14px; background: #ffffff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.upprev img { width: 100%; height: 100%; object-fit: cover; }
+.plus { font-size: 44px; font-weight: 300; color: #111; line-height: 1; }
+.upmeta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.upmeta b { color: var(--gold-2); }
+.uperr { color: var(--danger); margin: 0; width: 100%; }
+.rewardimg { width: 100%; max-height: 260px; object-fit: cover; border-radius: 16px; margin-bottom: 14px; border: 1px solid var(--line); }
+.tierbig { font-size: 96px; text-align: center; }
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -1314,7 +1334,7 @@ async function agentChatPanel(s) {
 let editProdId = null;
 async function pageProduk(s) {
   const { data: prods, error } = await sb.from("products")
-    .select("id,name,slug,description,price,sale_price,stock,low_stock_threshold,weight_gram,is_active").eq("store_id", s.id).order("name");
+    .select("id,name,slug,description,price,sale_price,stock,low_stock_threshold,weight_gram,is_active,image_url").eq("store_id", s.id).order("name");
   if (error) return dashPut(`<p class="error">${esc(error.message)}</p>`);
   const P = prods || [];
   const cur = P.find((p) => p.id === editProdId) || {};
@@ -1329,6 +1349,7 @@ async function pageProduk(s) {
         <div><label>Stok</label><input name="stock" type="number" min="0" value="${esc(cur.stock ?? 0)}" /></div>
         <div><label>Berat (gram)</label><input name="weight_gram" type="number" min="1" value="${esc(cur.weight_gram ?? 500)}" /></div>
         <div><label>Batas stok menipis</label><input name="low_stock_threshold" type="number" min="0" value="${esc(cur.low_stock_threshold ?? 5)}" /></div>
+        <div class="full">${plusTile("image_url", cur.image_url, "Foto produk")}</div>
         <div class="full"><label>Deskripsi</label><textarea name="description">${esc(cur.description || "")}</textarea></div>
         <label class="pick full"><input type="checkbox" name="is_active" ${cur.is_active === false ? "" : "checked"} /><span>Tampilkan di toko</span></label>
         <div class="row full"><button class="btn" type="submit">${editProdId ? "Simpan perubahan" : "Tambah produk"}</button>
@@ -1338,11 +1359,12 @@ async function pageProduk(s) {
     </div>
     <div class="panel" style="margin-top:18px"><h2>Daftar produk (${P.length})</h2>
       <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Nama</th><th>Harga</th><th>Stok</th><th>Berat</th><th>Tampil</th><th></th></tr></thead>
-      <tbody>${P.map((p) => `<tr><td>${esc(p.name)}</td><td>${p.sale_price ? `<s class="muted">${rp(p.price)}</s> ${rp(p.sale_price)}` : rp(p.price)}</td>
+      <tbody>${P.map((p) => `<tr><td><div class="pleft">${p.image_url ? `<img class="pthumb" src="${esc(p.image_url)}" alt="" />` : `<span class="ph">${productIcon(p.name)}</span>`}<span>${esc(p.name)}</span></div></td><td>${p.sale_price ? `<s class="muted">${rp(p.price)}</s> ${rp(p.sale_price)}` : rp(p.price)}</td>
         <td class="${p.stock <= p.low_stock_threshold ? "warn" : ""}">${p.stock}</td><td>${p.weight_gram} g</td><td>${p.is_active ? "Ya" : "Tidak"}</td>
         <td><button class="btn small outline" data-edit="${p.id}">Ubah</button> <button class="btn small outline" data-del="${p.id}">Hapus</button></td></tr>`).join("") || `<tr><td colspan="6" class="muted">Belum ada produk.</td></tr>`}</tbody></table></div>
     </div>`);
   const f = document.getElementById("pf");
+  wirePlusTiles(f, "products");
   const slugify = (t) => String(t).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   f.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1353,6 +1375,7 @@ async function pageProduk(s) {
       sale_price: x.sale_price.value === "" ? null : Number(x.sale_price.value),
       stock: Number(x.stock.value) || 0, low_stock_threshold: Number(x.low_stock_threshold.value) || 0,
       weight_gram: Math.max(1, Number(x.weight_gram.value) || 500), is_active: x.is_active.checked,
+      image_url: x.image_url.value || null,
     };
     const q = editProdId
       ? sb.from("products").update(row).eq("id", editProdId).eq("store_id", s.id)
@@ -1414,7 +1437,7 @@ async function pagePelanggan(s) {
 
 async function pagePengaturan(s) {
   const { data: t, error } = await sb.from("stores")
-    .select("name,description,location,couriers,payment_methods,payment_note,whatsapp_number,origin_area_id,origin_area_name").eq("id", s.id).maybeSingle();
+    .select("name,logo_url,description,location,couriers,payment_methods,payment_note,whatsapp_number,origin_area_id,origin_area_name").eq("id", s.id).maybeSingle();
   if (error) return dashPut(`<p class="error">${esc(error.message)}</p>`);
   const couriers = Array.isArray(t?.couriers) ? t.couriers : [];
   const methods = Array.isArray(t?.payment_methods) ? t.payment_methods : [];
@@ -1424,6 +1447,7 @@ async function pagePengaturan(s) {
     <div class="panel">
       <h2>Profil toko</h2>
       <form id="sf">
+        ${plusTile("logo_url", t?.logo_url, "Logo toko")}
         <label>Nama toko *</label><input name="store_name" required value="${esc(t?.name || "")}" />
         <p class="muted small">Alamat link toko tidak ikut berubah. Hanya nama yang tampil di halaman dan dashboard.</p>
         <label>Deskripsi</label><textarea name="description">${esc(t?.description || "")}</textarea>
@@ -1450,9 +1474,21 @@ async function pagePengaturan(s) {
         <div class="row"><button class="btn" type="submit">Simpan pengaturan toko</button></div>
         <p id="msgs"></p>
       </form>
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <h2>Ganti password</h2>
+      <p class="muted small">Masukkan password lama, lalu password baru (minimal 8 karakter) dua kali.</p>
+      <form id="pwf">
+        <label>Password lama</label><input name="old" type="password" required autocomplete="current-password" />
+        <label>Password baru</label><input name="new1" type="password" minlength="8" required autocomplete="new-password" />
+        <label>Ulangi password baru</label><input name="new2" type="password" minlength="8" required autocomplete="new-password" />
+        <div class="row"><button class="btn" type="submit" id="pwbtn">Ganti password</button></div>
+        <p id="msgpw2"></p>
+      </form>
     </div>`);
   const wire = () => document.querySelectorAll(".rm").forEach((b) => (b.onclick = () => b.parentElement.remove()));
   wire();
+  wirePlusTiles(document.getElementById("sf"), "logo");
   document.getElementById("addc").onclick = () => { document.getElementById("couriers").insertAdjacentHTML("beforeend", rowC()); wire(); };
   document.getElementById("addm").onclick = () => { document.getElementById("methods").insertAdjacentHTML("beforeend", rowM()); wire(); };
 
@@ -1484,7 +1520,7 @@ async function pagePengaturan(s) {
     const newName = f.store_name.value.trim();
     if (!newName) return (document.getElementById("msgs").innerHTML = `<span class="error">Nama toko tidak boleh kosong.</span>`);
     const { error: e2 } = await sb.from("stores").update({
-      name: newName,
+      name: newName, logo_url: f.logo_url.value || null,
       description: f.description.value.trim() || null, location: f.location.value.trim() || null,
       whatsapp_number: f.whatsapp_number.value.trim() || null, couriers: cs, payment_methods: ms,
       payment_note: f.payment_note.value.trim() || null,
@@ -1492,6 +1528,32 @@ async function pagePengaturan(s) {
       origin_area_id: f.origin_area_id.value || null, origin_area_name: f.origin_area_name.value || null,
     }).eq("id", s.id);
     document.getElementById("msgs").innerHTML = e2 ? `<span class="error">${esc(e2.message)}</span>` : `<span class="ok">Pengaturan tersimpan.</span>`;
+  });
+
+  document.getElementById("pwf").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const out = document.getElementById("msgpw2");
+    const btn = document.getElementById("pwbtn");
+    if (f.new1.value !== f.new2.value) return (out.innerHTML = `<span class="error">Password baru tidak sama.</span>`);
+    if (f.new1.value === f.old.value) return (out.innerHTML = `<span class="error">Password baru harus berbeda dari yang lama.</span>`);
+    btn.disabled = true;
+    try {
+      const { data: sd } = await sb.auth.getSession();
+      const email = sd.session?.user?.email;
+      if (!email) throw new Error("Silakan masuk ulang.");
+      // Pastikan password lama benar
+      const check = await sb.auth.signInWithPassword({ email, password: f.old.value });
+      if (check.error) throw new Error("Password lama tidak cocok.");
+      const { error } = await sb.auth.updateUser({ password: f.new1.value });
+      if (error) throw new Error(friendlyAuth(error.message));
+      out.innerHTML = `<span class="ok">Password berhasil diganti.</span>`;
+      f.reset();
+    } catch (err) {
+      out.innerHTML = `<span class="error">${esc(err.message || "Gagal mengganti password.")}</span>`;
+    } finally {
+      btn.disabled = false;
+    }
   });
 }
 
@@ -1549,6 +1611,7 @@ async function renderTierPage(slug, tier) {
           </div>`).join("") || `<p class="muted" style="padding:16px">Belum ada produk.</p>`}
       </div>
       <div class="panel" style="margin-top:18px"><h2>Reward ${esc(title)}</h2>
+        ${row.image_url ? `<img class="rewardimg" src="${esc(row.image_url)}" alt="Reward ${esc(title)}" />` : ""}
         <div class="pre">${row.reward ? esc(row.reward) : "Belum ada reward yang ditulis penjual."}</div>
       </div>`;
   });
@@ -1559,7 +1622,7 @@ async function pageTier(s) {
   const [{ data: prods }, { data: tp }, { data: st }] = await Promise.all([
     sb.from("products").select("id,name,price,sale_price,stock").eq("store_id", s.id).order("name"),
     sb.from("product_tier_prices").select("product_id,agen_price,distributor_price").eq("store_id", s.id),
-    sb.from("stores").select("reward_agen,reward_distributor").eq("id", s.id).maybeSingle(),
+    sb.from("stores").select("reward_agen,reward_distributor,reward_agen_image,reward_distributor_image").eq("id", s.id).maybeSingle(),
   ]);
   const P = prods || [];
   const T = Object.fromEntries((tp || []).map((x) => [x.product_id, x]));
@@ -1581,7 +1644,9 @@ async function pageTier(s) {
       <p class="muted small">Ditampilkan kepada agen atau distributor setelah mereka membuka halamannya dengan password.</p>
       <form id="rf">
         <label>Reward agen</label><textarea name="ra" placeholder="mis. Bonus 5% tiap bulan untuk pembelian di atas 10 pcs">${esc(st?.reward_agen || "")}</textarea>
+        ${plusTile("reward_agen_image", st?.reward_agen_image, "Gambar reward agen")}
         <label>Reward distributor</label><textarea name="rd" placeholder="mis. Bonus 8% dan gratis ongkir untuk pembelian di atas 50 pcs">${esc(st?.reward_distributor || "")}</textarea>
+        ${plusTile("reward_distributor_image", st?.reward_distributor_image, "Gambar reward distributor")}
         <div class="row"><button class="btn" type="submit">Simpan reward</button></div>
       </form>
       <p id="msgr"></p>
@@ -1603,11 +1668,57 @@ async function pageTier(s) {
     document.getElementById("msgt").innerHTML = `<span class="ok">Harga tersimpan.</span>`;
   });
 
+  wirePlusTiles(document.getElementById("rf"), "rewards");
   document.getElementById("rf").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target;
-    const { error: e3 } = await sb.from("stores").update({ reward_agen: f.ra.value.trim() || null, reward_distributor: f.rd.value.trim() || null }).eq("id", s.id);
+    const { error: e3 } = await sb.from("stores").update({
+      reward_agen: f.ra.value.trim() || null, reward_distributor: f.rd.value.trim() || null,
+      reward_agen_image: f.reward_agen_image.value || null, reward_distributor_image: f.reward_distributor_image.value || null,
+    }).eq("id", s.id);
     document.getElementById("msgr").innerHTML = e3 ? `<span class="error">${esc(e3.message)}</span>` : `<span class="ok">Reward tersimpan.</span>`;
+  });
+}
+
+/* ---------- tombol + untuk unggah gambar (dipakai di produk, reward, dan logo) ---------- */
+function plusTile(name, currentUrl, label) {
+  return `
+    <div class="uptile" data-up="${esc(name)}">
+      <input type="hidden" name="${esc(name)}" value="${esc(currentUrl || "")}" />
+      <div class="upprev">${currentUrl ? `<img src="${esc(currentUrl)}" alt="" />` : `<span class="plus">+</span>`}</div>
+      <div class="upmeta"><b>${esc(label)}</b><span class="muted small">${currentUrl ? "Ketuk untuk ganti gambar" : "Ketuk + untuk pilih gambar"}</span></div>
+      <input type="file" accept="image/*" class="upfile" hidden />
+      <p class="uperr small"></p>
+    </div>`;
+}
+function wirePlusTiles(root, folder) {
+  root.querySelectorAll(".uptile").forEach((tile) => {
+    const file = tile.querySelector(".upfile");
+    tile.addEventListener("click", (e) => { if (e.target.tagName !== "INPUT") file.click(); });
+    file.addEventListener("change", async () => {
+      const f = file.files[0];
+      if (!f) return;
+      const err = tile.querySelector(".uperr");
+      if (!f.type.startsWith("image/")) { err.textContent = "Pilih berkas gambar."; return; }
+      if (f.size > 5 * 1024 * 1024) { err.textContent = "Ukuran gambar maksimal 5 MB."; return; }
+      err.textContent = "Mengunggah…";
+      try {
+        const { data: sd } = await sb.auth.getSession();
+        const uid = sd.session?.user?.id;
+        if (!uid) throw new Error("Silakan masuk ulang.");
+        const safe = f.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-60);
+        const path = `${uid}/${folder}/${Date.now()}-${safe}`;
+        const up = await sb.storage.from("store-assets").upload(path, f, { upsert: false, contentType: f.type });
+        if (up.error) throw up.error;
+        const url = sb.storage.from("store-assets").getPublicUrl(path).data.publicUrl;
+        tile.querySelector('input[type="hidden"]').value = url;
+        tile.querySelector(".upprev").innerHTML = `<img src="${esc(url)}" alt="" />`;
+        tile.querySelector(".upmeta .muted").textContent = "Ketuk untuk ganti gambar";
+        err.textContent = "";
+      } catch (ex) {
+        err.textContent = ex.message || "Gagal mengunggah.";
+      }
+    });
   });
 }
 /* ---------- bundling / upsell di halaman produk ---------- */
