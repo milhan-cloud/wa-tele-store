@@ -694,10 +694,14 @@ async function renderCheckout(slug) {
         <div id="rates"><p class="muted small">Pilih kecamatan tujuan untuk melihat pilihan kurir dan ongkir.</p></div>
 
         <h2 style="margin-top:22px">Pembayaran</h2>
-        ${methods.length ? methods.map((m, i) => `
-          <label class="pick"><input type="radio" name="payment" value="${esc(m.label)}" ${i === 0 ? "checked" : ""} />
-            <span>${esc(m.label)}${m.account ? `<small class="muted" style="display:block;font-weight:500">${esc(m.account)}</small>` : ""}</span></label>`).join("")
-          : `<p class="muted">Instruksi pembayaran akan dikirim penjual lewat chat.</p>`}
+        ${methods.length ? ["bank", "ewallet"].map((grp) => {
+          const list = methods.filter((m) => (m.type === "ewallet" ? "ewallet" : "bank") === grp);
+          if (!list.length) return "";
+          return `<p class="muted small" style="margin:12px 0 4px">${grp === "bank" ? "Transfer bank" : "E-wallet"}</p>` + list.map((m, i) => `
+          <label class="pick"><input type="radio" name="payment" value="${esc(m.label)}" ${i === 0 && grp === "bank" ? "checked" : ""} />
+            <span>${esc(m.label)}${m.account ? `<small class="muted" style="display:block;font-weight:500">${esc(m.account)}</small>` : ""}</span></label>`).join("");
+        }).join("")
+          : `<p class="muted">Penjual belum mengisi metode pembayaran. Instruksi akan dikirim lewat chat.</p>`}
 
         <label>Catatan (opsional)</label><textarea name="notes"></textarea>
         <div class="row" style="margin-top:18px"><button class="btn" type="submit" id="send" disabled>Buat pesanan</button></div>
@@ -1436,6 +1440,9 @@ async function pagePelanggan(s) {
 }
 
 
+
+const BANK_OPTIONS = ["BCA", "BRI", "BNI", "Mandiri", "BSI", "CIMB Niaga", "Permata", "Danamon", "BTN", "Jago", "Seabank", "Blu BCA Digital"];
+const EWALLET_OPTIONS = ["DANA", "GoPay", "OVO", "ShopeePay", "LinkAja", "Sakuku"];
 const COURIER_OPTIONS = ["JNE", "JNT", "SPX (Shopee Express)", "Ninja Xpress", "POS Indonesia", "Lion Parcel", "SiCepat", "AnterAja", "Wahana", "TIKI", "SAP Express", "ID Express", "Ambil di tempat"];
 
 async function pagePengaturan(s) {
@@ -1449,7 +1456,20 @@ async function pagePengaturan(s) {
     if (c.name && !opts.includes(c.name)) opts.push(c.name);
     return `<div class="row rowc"><select name="cname">${opts.map((o) => `<option value="${esc(o)}" ${o === c.name ? "selected" : ""}>${esc(o)}</option>`).join("")}</select><input name="cfee" type="number" min="0" placeholder="Ongkir Rp" value="${esc(c.fee ?? "")}" /><button type="button" class="btn small outline rm">Hapus</button></div>`;
   };
-  const rowM = (m = {}) => `<div class="row rowm"><input name="mlabel" placeholder="Nama (mis. BCA)" value="${esc(m.label || "")}" /><input name="maccount" placeholder="Nomor / keterangan" value="${esc(m.account || "")}" /><button type="button" class="btn small outline rm">Hapus</button></div>`;
+  const rowM = (m = {}) => {
+    const isEw = m.type === "ewallet";
+    const opts = isEw ? EWALLET_OPTIONS : BANK_OPTIONS;
+    return `<div class="row rowm">
+      <select name="mtype" class="mtype">
+        <option value="bank" ${!isEw ? "selected" : ""}>Bank (transfer)</option>
+        <option value="ewallet" ${isEw ? "selected" : ""}>E-wallet</option>
+      </select>
+      <select name="mlabel" class="mlabel">${opts.map((o) => `<option ${o === m.label ? "selected" : ""}>${esc(o)}</option>`).join("")}</select>
+      <input name="maccount" placeholder="${isEw ? "Nomor HP" : "Nomor rekening"}" value="${esc((m.account || "").split(" a.n. ")[0])}" />
+      <input name="mholder" placeholder="Atas nama" value="${esc((m.account || "").includes(" a.n. ") ? m.account.split(" a.n. ")[1] : "")}" />
+      <button type="button" class="btn small outline rm">Hapus</button>
+    </div>`;
+  };
   dashPut(`
     <div class="panel">
       <h2>Profil toko</h2>
@@ -1476,7 +1496,7 @@ async function pagePengaturan(s) {
 
         <h2 style="margin-top:20px">Metode pembayaran</h2>
         <div id="methods">${methods.map(rowM).join("")}</div>
-        <button type="button" class="btn small outline" id="addm">+ Tambah metode</button>
+        <button type="button" class="btn small outline" id="addm">+ Tambah rekening atau e-wallet</button>
         <label style="margin-top:18px">Catatan pembayaran</label><textarea name="payment_note">${esc(t?.payment_note || "")}</textarea>
         <div class="row"><button class="btn" type="submit">Simpan pengaturan toko</button></div>
         <p id="msgs"></p>
@@ -1533,7 +1553,11 @@ async function pagePengaturan(s) {
     e.preventDefault();
     const f = e.target;
     const cs = [...document.querySelectorAll(".rowc")].map((r) => ({ name: r.querySelector('[name="cname"]').value.trim(), fee: Number(r.querySelector('[name="cfee"]').value) || 0 })).filter((c) => c.name);
-    const ms = [...document.querySelectorAll(".rowm")].map((r) => ({ type: "transfer", label: r.querySelector('[name="mlabel"]').value.trim(), account: r.querySelector('[name="maccount"]').value.trim() })).filter((m) => m.label);
+    const ms = [...document.querySelectorAll(".rowm")].map((r) => {
+      const no = r.querySelector('[name="maccount"]').value.trim();
+      const holder = r.querySelector('[name="mholder"]').value.trim();
+      return { type: r.querySelector('[name="mtype"]').value, label: r.querySelector('[name="mlabel"]').value, account: no ? (holder ? `${no} a.n. ${holder}` : no) : "" };
+    }).filter((m) => m.label && m.account);
     const newName = f.store_name.value.trim();
     if (!newName) return (document.getElementById("msgs").innerHTML = `<span class="error">Nama toko tidak boleh kosong.</span>`);
     const { error: e2 } = await sb.from("stores").update({
