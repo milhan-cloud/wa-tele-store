@@ -1435,13 +1435,20 @@ async function pagePelanggan(s) {
     </div>`);
 }
 
+
+const COURIER_OPTIONS = ["JNE", "JNT", "SPX (Shopee Express)", "Ninja Xpress", "POS Indonesia", "Lion Parcel", "SiCepat", "AnterAja", "Wahana", "TIKI", "SAP Express", "ID Express", "Ambil di tempat"];
+
 async function pagePengaturan(s) {
   const { data: t, error } = await sb.from("stores")
     .select("name,logo_url,description,location,couriers,payment_methods,payment_note,whatsapp_number,origin_area_id,origin_area_name").eq("id", s.id).maybeSingle();
   if (error) return dashPut(`<p class="error">${esc(error.message)}</p>`);
   const couriers = Array.isArray(t?.couriers) ? t.couriers : [];
   const methods = Array.isArray(t?.payment_methods) ? t.payment_methods : [];
-  const rowC = (c = {}) => `<div class="row rowc"><input name="cname" placeholder="Nama kurir (mis. JNE)" value="${esc(c.name || "")}" /><input name="cfee" type="number" min="0" placeholder="Ongkir Rp" value="${esc(c.fee ?? "")}" /><button type="button" class="btn small outline rm">Hapus</button></div>`;
+  const rowC = (c = {}) => {
+    const opts = [...COURIER_OPTIONS];
+    if (c.name && !opts.includes(c.name)) opts.push(c.name);
+    return `<div class="row rowc"><select name="cname">${opts.map((o) => `<option value="${esc(o)}" ${o === c.name ? "selected" : ""}>${esc(o)}</option>`).join("")}</select><input name="cfee" type="number" min="0" placeholder="Ongkir Rp" value="${esc(c.fee ?? "")}" /><button type="button" class="btn small outline rm">Hapus</button></div>`;
+  };
   const rowM = (m = {}) => `<div class="row rowm"><input name="mlabel" placeholder="Nama (mis. BCA)" value="${esc(m.label || "")}" /><input name="maccount" placeholder="Nomor / keterangan" value="${esc(m.account || "")}" /><button type="button" class="btn small outline rm">Hapus</button></div>`;
   dashPut(`
     <div class="panel">
@@ -1473,6 +1480,16 @@ async function pagePengaturan(s) {
         <label style="margin-top:18px">Catatan pembayaran</label><textarea name="payment_note">${esc(t?.payment_note || "")}</textarea>
         <div class="row"><button class="btn" type="submit">Simpan pengaturan toko</button></div>
         <p id="msgs"></p>
+      </form>
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <h2>Ganti username</h2>
+      <p class="muted small">Username dipakai untuk masuk. Setelah diganti, Anda perlu masuk ulang dengan username baru.</p>
+      <form id="unf">
+        <label>Username baru (huruf kecil, angka, titik, garis bawah, atau minus; 3 sampai 30 karakter)</label><input name="uname" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9._-]+" />
+        <label>Password saat ini (untuk konfirmasi)</label><input name="upw" type="password" required autocomplete="current-password" />
+        <div class="row"><button class="btn" type="submit" id="unbtn">Ganti username</button></div>
+        <p id="msgun"></p>
       </form>
     </div>
     <div class="panel" style="margin-top:18px">
@@ -1528,6 +1545,36 @@ async function pagePengaturan(s) {
       origin_area_id: f.origin_area_id.value || null, origin_area_name: f.origin_area_name.value || null,
     }).eq("id", s.id);
     document.getElementById("msgs").innerHTML = e2 ? `<span class="error">${esc(e2.message)}</span>` : `<span class="ok">Pengaturan tersimpan.</span>`;
+  });
+
+  document.getElementById("unf").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const out = document.getElementById("msgun");
+    const btn = document.getElementById("unbtn");
+    btn.disabled = true;
+    try {
+      const { data: sd } = await sb.auth.getSession();
+      const email = sd.session?.user?.email;
+      if (!email) throw new Error("Silakan masuk ulang.");
+      const check = await sb.auth.signInWithPassword({ email, password: f.upw.value });
+      if (check.error) throw new Error("Password tidak cocok.");
+      const token = check.data.session?.access_token || "";
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/owner-account`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, apikey: SUPABASE_KEY },
+        body: JSON.stringify({ action: "change_username", username: f.uname.value.trim() }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!j.ok) throw new Error(j.error || "Gagal mengganti username.");
+      await sb.auth.signOut();
+      toast("Username diganti. Silakan masuk dengan username baru.");
+      location.hash = "#/masuk";
+    } catch (err) {
+      out.innerHTML = `<span class="error">${esc(err.message || "Gagal mengganti username.")}</span>`;
+    } finally {
+      btn.disabled = false;
+    }
   });
 
   document.getElementById("pwf").addEventListener("submit", async (e) => {
@@ -1669,6 +1716,22 @@ async function pageTier(s) {
   });
 
   wirePlusTiles(document.getElementById("rf"), "rewards");
+  document.getElementById("dashbody").insertAdjacentHTML("beforeend", `
+    <div class="panel" style="margin-top:18px"><h2>Password agen & distributor</h2>
+      <p class="muted small">Agen dan distributor memakai password ini untuk membuka halaman harga mereka. Harus diisi minimal 6 karakter.</p>
+      <form id="pwagen"><label>Password agen</label><input name="pa" type="text" minlength="6" required autocomplete="off" />
+        <div class="row"><button class="btn" type="submit">Simpan password agen</button></div></form>
+      <p id="msgpa"></p>
+      <form id="pwdist" style="margin-top:14px"><label>Password distributor</label><input name="pd" type="text" minlength="6" required autocomplete="off" />
+        <div class="row"><button class="btn" type="submit">Simpan password distributor</button></div></form>
+      <p id="msgpd"></p>
+    </div>`);
+  const savePw = async (tier, value, outId) => {
+    const { error: e4 } = await sb.rpc("set_catalog_password", { p_store: s.id, p_tier: tier, p_password: value });
+    document.getElementById(outId).innerHTML = e4 ? `<span class="error">${esc(e4.message)}</span>` : `<span class="ok">Password ${tier} tersimpan.</span>`;
+  };
+  document.getElementById("pwagen").addEventListener("submit", (e) => { e.preventDefault(); savePw("agen", e.target.pa.value.trim(), "msgpa"); e.target.pa.value = ""; });
+  document.getElementById("pwdist").addEventListener("submit", (e) => { e.preventDefault(); savePw("distributor", e.target.pd.value.trim(), "msgpd"); e.target.pd.value = ""; });
   document.getElementById("rf").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target;
