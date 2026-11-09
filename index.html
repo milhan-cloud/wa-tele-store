@@ -511,6 +511,54 @@ input[type="checkbox"], input[type="radio"] { background: initial !important; co
   .bannertx h1 { font-size: 26px; }
 }
 
+/* ===== SIDEBAR FINAL: sama untuk dashboard pemilik dan etalase (mengikuti gambar referensi) ===== */
+.dash { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 22px; align-items: start; margin-top: 4px; }
+.shop { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 22px; align-items: start; max-width: 1200px; margin: 0 auto; }
+.side {
+  position: sticky; top: 84px; display: flex; flex-direction: column; gap: 10px; padding: 16px 14px;
+  background: linear-gradient(180deg, #0b2f80 0%, #071e5c 100%); border: 1px solid rgba(255,200,46,.55);
+  border-radius: 22px; box-shadow: 0 20px 40px rgba(0,0,0,.35); max-height: calc(100vh - 100px); overflow-y: auto;
+}
+.sidebrand { display: flex; gap: 10px; align-items: center; padding: 2px 4px 6px; }
+.sbag { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #ffe27a, #ffb300); color: #1a1408; }
+.sidebrand b { display: block; font-size: 17px; color: #fff; }
+.sidebrand small { color: var(--gold-2); font-size: 12px; }
+.sidestore { display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,.06); border: 1px solid rgba(255,200,46,.3); border-radius: 16px; padding: 10px; }
+.sidestore b { display: block; font-size: 14px; color: #fff; line-height: 1.25; }
+.sidestore small { font-size: 12px; }
+.sidenav { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.navrow {
+  display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border-radius: 14px;
+  color: #fff; font-size: 14px; font-weight: 600; line-height: 1.2; text-align: left;
+}
+.navic { width: 22px; min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; color: var(--gold-2); flex-shrink: 0; }
+.navtx { flex: 1; min-width: 0; white-space: normal; overflow: visible; text-overflow: clip; }
+.navrow:hover { background: rgba(255,200,46,.1); }
+.navrow.on { background: linear-gradient(90deg, #ffe066, #ffc52e); color: #1a1408; box-shadow: 0 6px 18px rgba(255,197,46,.35); }
+.navrow.on .navic { color: #1a1408; }
+.nbadge { background: #ef4444; color: #fff; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 800; }
+.navrow.on .nbadge { background: #1a1408; color: #ffe066; }
+.grouphead { margin: 14px 6px 2px; display: flex; flex-direction: column; gap: 2px; }
+.grouphead b { font-size: 11px; letter-spacing: .08em; color: #fff; }
+.gsub { font-size: 12px; color: var(--gold-2); display: flex; gap: 6px; align-items: center; }
+.gsub em { font-style: normal; background: #ffc52e; color: #1a1408; border-radius: 6px; padding: 0 6px; font-size: 10px; font-weight: 800; }
+.subnav { display: flex; flex-direction: column; gap: 2px; margin: 0 0 4px 22px; padding-left: 12px; border-left: 1px dashed rgba(255,200,46,.45); }
+.subrow { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 6px 10px; border-radius: 10px; color: #e6eeff; font-size: 13px; font-weight: 500; line-height: 1.25; }
+.subrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+.subrow:hover { background: rgba(255,200,46,.08); }
+.subrow.on { color: var(--gold-2); font-weight: 800; }
+.upgrade {
+  margin-top: 8px; width: 100%; border: 1px solid #ffc52e; border-radius: 16px; padding: 13px; font: inherit; font-weight: 800; font-size: 14px;
+  background: linear-gradient(135deg, #ffe066, #ffc52e); color: #1a1408; cursor: pointer; text-align: center;
+  box-shadow: 0 10px 22px rgba(255,197,46,.3);
+}
+.upgrade.wa { background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; border-color: transparent; }
+@media (max-width: 900px) {
+  .dash, .shop { grid-template-columns: 1fr; }
+  .side { position: static; max-height: none; }
+  .navrow { min-height: 46px; }
+}
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -1423,14 +1471,29 @@ const DASH_GROUPS = [
 const DASH_LABEL = {};
 DASH_GROUPS.forEach((g) => g.items.forEach(([k, l, kids]) => { DASH_LABEL[k] = l; (kids || []).forEach(([ck, cl]) => (DASH_LABEL[ck] = cl)); }));
 
-function dashNav(active) {
-  const row = (k, l, cls) => `<a href="#/dashboard/${k}" class="navrow ${cls}"><span class="navic">${ICON[k] || ""}</span><span class="navtx">${esc(l)}</span></a>`;
-  return `<nav class="dnav">${DASH_GROUPS.map((g) => `
-    ${g.heading ? `<div class="grouphead"><b>${esc(g.heading)}</b>${g.sub ? `<span>${esc(g.sub)}</span>` : ""}</div>` : ""}
-    ${g.items.map(([k, l, kids]) => `
-      ${row(k, l, k === active || (kids || []).some(([ck]) => ck === active) ? "on" : "")}
-      ${kids ? `<div class="subnav">${kids.map(([ck, cl]) => row(ck, cl, ck === active ? "on" : "")).join("")}</div>` : ""}`).join("")}`).join("")}
-  </nav>`;
+function sideBrand() {
+  return `<div class="sidebrand"><span class="sbag">${SV('<path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>')}</span><div><b>WA Store</b><small>Toko online Anda</small></div></div>`;
+}
+function sideStore(s, plan) {
+  return `<div class="sidestore">
+    <span class="avatar sm">${esc(initials(s.name))}</span>
+    <div><b>${esc(s.name)}</b><small class="gold">${esc(plan || "Premium Plan")}</small></div>
+  </div>`;
+}
+function dashNav(active, s) {
+  const row = (k, l, cls, badge) => `<a href="#/dashboard/${k}" class="navrow ${cls}"><span class="navic">${ICON[k] || ""}</span><span class="navtx">${esc(l)}</span>${badge ? `<span class="nbadge">${badge}</span>` : ""}</a>`;
+  const subrow = (k, l, cls) => `<a href="#/dashboard/${k}" class="subrow ${cls}"><span class="dot"></span><span class="navtx">${esc(l)}</span></a>`;
+  return `<aside class="side">
+    ${sideBrand()}
+    ${s ? sideStore(s) : ""}
+    <nav class="sidenav">${DASH_GROUPS.map((g) => `
+      ${g.heading ? `<div class="grouphead"><b>${esc(g.heading)}</b>${g.sub ? `<span class="gsub">${esc(g.sub)} <em class="nbadge">Baru</em></span>` : ""}</div>` : ""}
+      ${g.items.map(([k, l, kids]) => `
+        ${row(k, l, k === active || (kids || []).some(([ck]) => ck === active) ? "on" : "")}
+        ${kids ? `<div class="subnav">${kids.map(([ck, cl]) => subrow(ck, cl, ck === active ? "on" : "")).join("")}</div>` : ""}`).join("")}`).join("")}
+    </nav>
+    <button type="button" class="upgrade" onclick="alert('Pembayaran paket belum tersedia. Hubungi admin platform.')">♛ Upgrade Paket</button>
+  </aside>`;
 }
 
 async function renderDashboard(page = "produk") {
@@ -1450,7 +1513,7 @@ async function renderDashboard(page = "produk") {
       <div><h1>${esc(s.name)}</h1><div class="muted">Dashboard pemilik · <a href="#/toko/${esc(s.slug)}" style="color:var(--gold-2)">lihat toko</a></div></div>
     </div>
     <div class="dash">
-      ${dashNav(key)}
+      ${dashNav(key, s)}
       <div id="dashbody"><p class="muted">Memuat…</p></div>
     </div>`);
   await DASH_PAGES[key](s);
@@ -2199,9 +2262,11 @@ async function ensureShopShell(slug, activeKey) {
   const count = getCart().filter((i) => i.slug === slug).reduce((a, i) => a + Number(i.qty || 0), 0);
   app.innerHTML = `
     <div class="shop">
-      <aside class="snavwrap">
-        <div class="shopbrand"><span class="avatar sm">${esc(initials(store.name))}</span><div><b>${esc(store.name)}</b><small>${esc(store.location || "Toko online")}</small></div></div>
-        <nav class="dnav">${SHOP_MENU.map(([k, l, seg]) => `<a href="#/toko/${esc(slug)}${seg ? "/" + seg : ""}" class="navrow ${k === activeKey ? "on" : ""}"><span class="navic">${SHOP_ICON[k] || ""}</span><span class="navtx">${esc(l)}${k === "keranjang" && count ? ` <b class="badge-n">${count}</b>` : ""}</span></a>`).join("")}</nav>
+      <aside class="side">
+        ${sideBrand()}
+        ${sideStore(store, store.location || "Toko online")}
+        <nav class="sidenav">${SHOP_MENU.map(([k, l, seg]) => `<a href="#/toko/${esc(slug)}${seg ? "/" + seg : ""}" class="navrow ${k === activeKey ? "on" : ""}"><span class="navic">${SHOP_ICON[k] || ""}</span><span class="navtx">${esc(l)}</span>${k === "keranjang" && count ? `<span class="nbadge">${count}</span>` : ""}</a>`).join("")}</nav>
+        <a class="upgrade wa" href="${esc(waLink(store.whatsapp_number, "Halo " + store.name) || "#/tim")}" target="_blank" rel="noopener">Hubungi via WhatsApp</a>
       </aside>
       <section id="shopbody"></section>
     </div>`;
