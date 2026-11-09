@@ -15,18 +15,18 @@
   <style>
 /* WA Store — tema premium gelap + emas (mengikuti referensi desain) */
 :root {
-  --bg: #0a1224;
-  --bg-2: #0f1a31;
-  --panel: rgba(20, 32, 58, 0.72);
-  --panel-solid: #14203a;
-  --line: rgba(212, 162, 76, 0.35);
-  --gold: #e7b75a;
-  --gold-2: #f6d98a;
-  --gold-deep: #b8832e;
-  --text: #f4efe2;
-  --muted: #9aa6bd;
-  --ok: #43d68a;
-  --warn: #f5b84a;
+  --bg: #04103a;
+  --bg-2: #0a2a7a;
+  --panel: rgba(12, 44, 118, 0.74);
+  --panel-solid: #0d2f80;
+  --line: rgba(255, 200, 46, 0.5);
+  --gold: #ffc52e;
+  --gold-2: #ffe27a;
+  --gold-deep: #e39a00;
+  --text: #f4f8ff;
+  --muted: #a9c0ea;
+  --ok: #34d399;
+  --warn: #fbbf24;
   --danger: #ff7b7b;
   --radius: 18px;
 }
@@ -37,9 +37,9 @@ body {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(1000px 500px at 85% -10%, rgba(231,183,90,.12), transparent 60%),
-    radial-gradient(800px 400px at -10% 20%, rgba(60,110,200,.14), transparent 60%),
-    linear-gradient(180deg, var(--bg-2), var(--bg) 60%);
+    radial-gradient(900px 500px at 80% -10%, rgba(60,140,255,.35), transparent 60%),
+    radial-gradient(800px 420px at -10% 30%, rgba(40,110,255,.25), transparent 60%),
+    linear-gradient(180deg, var(--bg-2), var(--bg) 70%);
   background-attachment: fixed;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -417,6 +417,100 @@ input[type="checkbox"], input[type="radio"] { background: initial !important; co
 .rewardimg { width: 100%; max-height: 260px; object-fit: cover; border-radius: 16px; margin-bottom: 14px; border: 1px solid var(--line); }
 .tierbig { font-size: 96px; text-align: center; }
 
+/* ---------- sidebar dashboard bertingkat ---------- */
+.dnav { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 84px; background: var(--panel); border: 1px solid rgba(212,162,76,.22); border-radius: 18px; padding: 10px; max-height: calc(100vh - 110px); overflow-y: auto; }
+.grph { display: flex; align-items: center; gap: 10px; width: 100%; background: transparent; border: 0; color: var(--text); font: inherit; font-weight: 700; font-size: 14px; padding: 10px 12px; border-radius: 12px; cursor: pointer; text-align: left; }
+.grph span { width: 22px; text-align: center; }
+.grph em { margin-left: auto; font-style: normal; color: var(--gold-2); }
+.grph:hover { background: rgba(231,183,90,.08); }
+.grp.open > .grph { background: rgba(231,183,90,.12); color: var(--gold-2); }
+.gchild { display: flex; flex-direction: column; padding: 4px 0 6px 40px; gap: 2px; }
+.gchild[hidden] { display: none; }
+.gchild a { padding: 7px 10px; border-radius: 10px; font-size: 13px; color: var(--muted); }
+.gchild a:hover { color: var(--gold-2); background: rgba(231,183,90,.06); }
+.gchild a.on { color: #1a1408; background: linear-gradient(135deg, var(--gold-2), var(--gold)); font-weight: 700; }
+.dash { display: grid; grid-template-columns: 260px 1fr; gap: 20px; align-items: start; margin-top: 4px; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.kpi { background: var(--panel); border: 1px solid rgba(212,162,76,.22); border-radius: 16px; padding: 16px; }
+.kpi span { display: block; color: var(--muted); font-size: 12px; }
+.kpi b { font-size: 20px; color: var(--gold-2); }
+@media (max-width: 900px) {
+  .dash { grid-template-columns: 1fr; }
+  .dnav { position: static; max-height: none; }
+  .kpis { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- sidebar dashboard: daftar datar + judul kelompok ---------- */
+.grouphead { margin: 14px 12px 6px; display: flex; flex-direction: column; }
+.grouphead b { font-size: 11px; letter-spacing: .08em; color: var(--gold-2); }
+.grouphead span { font-size: 11px; color: var(--muted); }
+.dnav a { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--text); }
+.dnav a span { width: 22px; text-align: center; }
+.dnav a:hover { background: rgba(231,183,90,.08); color: var(--gold-2); }
+.dnav a.on { background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1a1408; }
+.dnav { gap: 4px; }
+
+/* ---------- sidebar rapi: ikon sejajar, teks rata kiri ---------- */
+.dnav { display: flex; flex-direction: column; gap: 2px; padding: 12px 10px; }
+.navrow { display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 12px; color: var(--text); font-size: 14px; font-weight: 600; text-align: left; }
+.navic { width: 24px; min-width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold-2); }
+.navtx { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.navrow:hover { background: rgba(231,183,90,.08); color: var(--gold-2); }
+.navrow.on { background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1a1408; }
+.navrow.on .navic { color: #1a1408; }
+.subnav { display: flex; flex-direction: column; gap: 2px; padding: 2px 0 6px 18px; margin-left: 23px; border-left: 1px dashed rgba(231,183,90,.35); }
+.subnav .navrow { height: 36px; font-size: 13px; font-weight: 500; color: var(--muted); padding-left: 14px; }
+.subnav .navrow .navic { width: 18px; min-width: 18px; height: 18px; }
+.subnav .navrow.on { color: #1a1408; font-weight: 700; }
+.grouphead { margin: 16px 12px 6px; display: flex; flex-direction: column; gap: 1px; }
+.grouphead b { font-size: 11px; letter-spacing: .08em; color: var(--gold-2); }
+.grouphead span { font-size: 11px; color: var(--muted); }
+
+/* ===== Warna mengikuti gambar referensi ===== */
+.kpis .kpi { color: #fff; border: 0; }
+.kpis .kpi:nth-child(4n+1) { background: linear-gradient(135deg, #1e6bff, #0a3ea8); }
+.kpis .kpi:nth-child(4n+2) { background: linear-gradient(135deg, #14a058, #0b6b3a); }
+.kpis .kpi:nth-child(4n+3) { background: linear-gradient(135deg, #7c3aed, #4c1d95); }
+.kpis .kpi:nth-child(4n+4) { background: linear-gradient(135deg, #0d9488, #0a5d57); }
+.kpis .kpi span { color: rgba(255,255,255,.85); }
+.kpis .kpi b { color: #fff; }
+.dnav .navrow.on { box-shadow: 0 6px 18px rgba(255,197,46,.35); }
+.gold { color: var(--gold-2); }
+
+/* ===== Kerangka etalase (menu kiri seperti dashboard pemilik) ===== */
+.shop { display: grid; grid-template-columns: 250px 1fr; gap: 22px; align-items: start; max-width: 1200px; margin: 0 auto; }
+.snavwrap { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 14px; }
+.shopbrand { display: flex; gap: 12px; align-items: center; padding: 6px 4px 12px; border-bottom: 1px dashed rgba(255,200,46,.35); }
+.shopbrand b { display: block; font-size: 15px; }
+.shopbrand small { color: var(--muted); font-size: 12px; }
+.avatar.sm { width: 42px; height: 42px; border-radius: 14px; font-size: 14px; }
+.snavwrap .dnav { position: static; background: transparent; border: 0; padding: 0; max-height: none; }
+.badge-n { background: var(--gold); color: #1a1408; border-radius: 999px; padding: 0 7px; font-size: 11px; margin-left: 6px; }
+.pagehead h1 { margin: 0 0 4px; }
+.searchbar input { margin-bottom: 4px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 18px; }
+.chip { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--text); font-size: 13px; font-weight: 600; }
+.chip.on, .chip:hover { background: linear-gradient(135deg, var(--gold-2), var(--gold)); color: #1a1408; border-color: transparent; }
+.ph2 { display: flex; align-items: center; justify-content: center; font-size: 48px; }
+.banner {
+  position: relative; border-radius: 24px; overflow: hidden; margin-bottom: 22px; padding: 34px 30px; min-height: 180px;
+  background: linear-gradient(120deg, #1e6bff 0%, #0a3ea8 55%, #04103a 100%);
+  background-size: cover; background-position: center; border: 1px solid rgba(255,200,46,.45);
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+.banner::after { content: ""; position: absolute; right: -40px; top: -40px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(255,200,46,.45), transparent 70%); }
+.bannertx { position: relative; z-index: 1; max-width: 520px; }
+.bannertx h1 { font-size: 34px; color: #fff; margin: 10px 0 6px; }
+.bannertx p { color: #dbe8ff; margin: 0 0 14px; }
+.pill { display: inline-block; background: rgba(255,200,46,.18); color: var(--gold-2); border: 1px solid rgba(255,200,46,.5); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 700; }
+@media (max-width: 900px) {
+  .shop { grid-template-columns: 1fr; }
+  .snavwrap { position: static; }
+  .snavwrap .dnav { flex-direction: row; overflow-x: auto; }
+  .snavwrap .dnav .navrow { white-space: nowrap; }
+  .bannertx h1 { font-size: 26px; }
+}
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -469,7 +563,11 @@ const waLink = (num, text) => {
   const n = normPhone(num);
   return n ? `https://wa.me/${n}?text=${encodeURIComponent(text)}` : null;
 };
-const setView = (html) => { app.innerHTML = html; window.scrollTo(0, 0); };
+let SHOP_MODE = false;
+const setView = (html) => {
+  if (SHOP_MODE) { const el = document.getElementById("shopbody"); if (el) { el.innerHTML = html; window.scrollTo(0, 0); return; } }
+  app.innerHTML = html; window.scrollTo(0, 0);
+};
 const toast = (msg, cls = "ok") => {
   const el = document.getElementById("msg");
   if (el) { el.className = cls; el.textContent = msg; }
@@ -495,7 +593,7 @@ const addToCart = (item) => {
 async function getStore(slug) {
   const { data, error } = await sb
     .from("stores")
-    .select("id,name,slug,description,location,logo_url,whatsapp_number,telegram_username,payment_accounts,payment_note,couriers,payment_methods")
+    .select("id,name,slug,description,location,logo_url,whatsapp_number,telegram_username,payment_accounts,payment_note,couriers,payment_methods,banner_url,banner_title,banner_subtitle")
     .eq("slug", slug).eq("is_active", true).maybeSingle();
   if (error) throw error;
   return data;
@@ -554,6 +652,14 @@ async function renderStore(slug) {
   const products = await getProducts(store.id);
   const wa = waLink(store.whatsapp_number, `Halo ${store.name}, saya mau tanya produk.`);
   setView(`
+    <div class="banner" style="${store.banner_url ? `background-image:linear-gradient(90deg,rgba(5,18,58,.92),rgba(5,18,58,.35)),url('${esc(store.banner_url)}')` : ""}">
+      <div class="bannertx">
+        <span class="pill">Promo spesial</span>
+        <h1>${esc(store.banner_title || store.name)}</h1>
+        <p>${esc(store.banner_subtitle || store.description || "Belanja mudah lewat WhatsApp atau Telegram.")}</p>
+        <a class="btn" href="#/toko/${esc(slug)}/semua">Belanja sekarang</a>
+      </div>
+    </div>
     <div class="store-head">
       <span class="avatar">${esc(initials(store.name))}</span>
       <div>
@@ -1260,7 +1366,74 @@ function dashPut(html) {
   if (el) el.innerHTML = html; else setView(html);
 }
 
-async function renderDashboard(sub = "") {
+const SV = (d) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICON = {
+  produk: SV('<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),
+  pesanan: SV('<path d="M6 2h12l1 4H5z"/><path d="M5 6v16h14V6"/><path d="M9 11h6M9 15h6"/>'),
+  pelanggan: SV('<circle cx="9" cy="8" r="3.5"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><circle cx="17" cy="9" r="2.5"/><path d="M22 20c0-2.8-1.8-5-4.5-5.6"/>'),
+  "agen-distributor": SV('<path d="M12 2l3 6 6 .9-4.5 4.4 1 6.3L12 17l-5.5 2.6 1-6.3L3 8.9 9 8z"/>'),
+  "agen-laporan": SV('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  "mp-ringkasan": SV('<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>'),
+  "mp-koneksi": SV('<path d="M9 2v5M15 2v5M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v6"/>'),
+  "mp-shopee": SV('<path d="M6 7h12l1 14H5z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/>'),
+  "mp-tiktok": SV('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'),
+  "mp-produk": SV('<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>'),
+  "mp-stok": SV('<path d="M12 2l10 5-10 5L2 7z"/><path d="M2 12l10 5 10-5M2 17l10 5 10-5"/>'),
+  "mp-pesanan": SV('<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6"/>'),
+  "mp-analitik": SV('<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>'),
+  "mp-riwayat": SV('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+  promosi: SV('<path d="M3 11v3a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 8a5 5 0 0 1 0 8"/>'),
+  asisten: SV('<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9 17h6"/>'),
+  pengaturan: SV('<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.7a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.7a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/>'),
+};
+
+const SHOP_ICON = {
+  beranda: SV('<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>'),
+  semua: SV('<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>'),
+  kategori: SV('<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>'),
+  keranjang: SV('<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6"/>'),
+  pesanan: SV('<path d="M6 2h12l1 4H5z"/><path d="M5 6v16h14V6"/><path d="M9 11h6M9 15h6"/>'),
+  agen: SV('<path d="M12 2l3 6 6 .9-4.5 4.4 1 6.3L12 17l-5.5 2.6 1-6.3L3 8.9 9 8z"/>'),
+  profil: SV('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>'),
+  kontak: SV('<path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+};
+const DASH_GROUPS = [
+  { items: [
+    ["produk", "Produk"],
+    ["pesanan", "Pesanan"],
+    ["pelanggan", "Pelanggan"],
+    ["agen-distributor", "Agen & distributor"],
+    ["agen-laporan", "Agen & laporan"],
+  ]},
+  { heading: "MARKETPLACE & INTEGRASI", sub: "AI Commerce Connector", items: [
+    ["mp-ringkasan", "Ringkasan Integrasi"],
+    ["mp-koneksi", "Koneksi Marketplace", [["mp-shopee", "Shopee"], ["mp-tiktok", "TikTok Shop"]]],
+    ["mp-produk", "Sinkronisasi Produk"],
+    ["mp-stok", "Sinkronisasi Stok"],
+    ["mp-pesanan", "Pesanan Marketplace"],
+    ["mp-analitik", "Analitik Penjualan AI"],
+    ["mp-riwayat", "Riwayat Sinkronisasi"],
+  ]},
+  { heading: "PENGELOLAAN", items: [
+    ["promosi", "Promosi"],
+    ["asisten", "Asisten AI"],
+    ["pengaturan", "Pengaturan Toko"],
+  ]},
+];
+const DASH_LABEL = {};
+DASH_GROUPS.forEach((g) => g.items.forEach(([k, l, kids]) => { DASH_LABEL[k] = l; (kids || []).forEach(([ck, cl]) => (DASH_LABEL[ck] = cl)); }));
+
+function dashNav(active) {
+  const row = (k, l, cls) => `<a href="#/dashboard/${k}" class="navrow ${cls}"><span class="navic">${ICON[k] || ""}</span><span class="navtx">${esc(l)}</span></a>`;
+  return `<nav class="dnav">${DASH_GROUPS.map((g) => `
+    ${g.heading ? `<div class="grouphead"><b>${esc(g.heading)}</b>${g.sub ? `<span>${esc(g.sub)}</span>` : ""}</div>` : ""}
+    ${g.items.map(([k, l, kids]) => `
+      ${row(k, l, k === active || (kids || []).some(([ck]) => ck === active) ? "on" : "")}
+      ${kids ? `<div class="subnav">${kids.map(([ck, cl]) => row(ck, cl, ck === active ? "on" : "")).join("")}</div>` : ""}`).join("")}`).join("")}
+  </nav>`;
+}
+
+async function renderDashboard(page = "produk") {
   const { data: sess } = await sb.auth.getSession();
   if (!sess.session) return setView(`<div class="panel narrow"><h2>Silakan masuk</h2><p class="muted">Dashboard hanya untuk pemilik toko.</p><a class="btn" href="#/masuk">Masuk</a></div>`);
   setView(`<p class="muted">Memuat dashboard…</p>`);
@@ -1268,10 +1441,8 @@ async function renderDashboard(sub = "") {
   if (error) return setView(`<p class="error">${esc(error.message)}</p>`);
   if (!stores || !stores.length) return setView(`<div class="panel narrow"><h2>Belum ada toko</h2><p class="muted">Aktifkan toko dengan kunci lisensi.</p><a class="btn" href="#/daftar">Aktifkan toko</a></div>`);
   const s = stores[0];
+  const key = DASH_LABEL[page] ? page : "produk";
   const { data: isAdmin } = await sb.rpc("is_platform_admin");
-  const items = [["produk", "Produk", "▦"], ["pesanan", "Pesanan", "🧾"], ["pelanggan", "Pelanggan", "👥"],
-    ["pengaturan", "Pengaturan toko", "⚙"], ["tier", "Agen & distributor", "◈"], ["agen", "Agen & laporan", "✦"]];
-  const active = items.find(([k]) => k === sub) ? sub : "agen";
   setView(`
     ${isAdmin ? `<div class="panel" style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span>Anda masuk sebagai <b>admin platform</b>.</span><a class="btn small" href="#/admin">Buka panel admin</a></div>` : ""}
     <div class="store-head">
@@ -1279,14 +1450,218 @@ async function renderDashboard(sub = "") {
       <div><h1>${esc(s.name)}</h1><div class="muted">Dashboard pemilik · <a href="#/toko/${esc(s.slug)}" style="color:var(--gold-2)">lihat toko</a></div></div>
     </div>
     <div class="dash">
-      <nav class="dnav">${items.map(([k, l, i]) => `<a href="#/dashboard/${k}" class="${k === active ? "on" : ""}"><span>${i}</span>${l}</a>`).join("")}</nav>
+      ${dashNav(key)}
       <div id="dashbody"><p class="muted">Memuat…</p></div>
     </div>`);
-  const pages = { produk: pageProduk, pesanan: pagePesanan, pelanggan: pagePelanggan, pengaturan: pagePengaturan, tier: pageTier, agen: pageAgen };
-  await pages[active](s);
-  if (active === "agen") await agentChatPanel(s);
+  await DASH_PAGES[key](s);
 }
 
+const DASH_PAGES = {
+  "produk": pageProduk,
+  "pesanan": pagePesanan,
+  "pelanggan": pagePelanggan,
+  "agen-distributor": pageTier,
+  "agen-laporan": pageAgen,
+  "mp-ringkasan": pageMpRingkasan,
+  "mp-koneksi": pageMpKoneksi,
+  "mp-shopee": (s) => pageMpPlatform(s, "shopee"),
+  "mp-tiktok": (s) => pageMpPlatform(s, "tiktok"),
+  "mp-produk": (s) => pageMpInfo(s, "Sinkronisasi Produk", "Mengirim daftar produk ke marketplace secara otomatis."),
+  "mp-stok": (s) => pageMpInfo(s, "Sinkronisasi Stok", "Menyamakan stok di toko dan marketplace setiap ada perubahan."),
+  "mp-pesanan": pageMpPesanan,
+  "mp-analitik": pagePenjualan,
+  "mp-riwayat": (s) => pageMpInfo(s, "Riwayat Sinkronisasi", "Catatan setiap sinkronisasi akan tampil di sini."),
+  "promosi": pageMarketing,
+  "asisten": pageTanya,
+  "pengaturan": pagePengaturan,
+};
+
+
+async function pageMpPlatform(s, platform) {
+  const name = platform === "shopee" ? "Shopee" : "TikTok Shop";
+  const { data: c } = await sb.from("marketplace_connections").select("status,requested_at,connected_at").eq("store_id", s.id).eq("platform", platform).maybeSingle();
+  const status = c?.status || "belum_terhubung";
+  const label = { belum_terhubung: "Belum terhubung", diminta: "Menunggu persetujuan", terhubung: "Terhubung", bermasalah: "Bermasalah" }[status];
+  const cls = status === "terhubung" ? "ok" : status === "bermasalah" ? "used" : "";
+  const canRequest = status === "belum_terhubung" || status === "bermasalah";
+  dashPut(`<div class="panel"><h2>${esc(name)}</h2>
+    <div class="line"><span>Status</span><span class="tag ${cls}">${esc(label)}</span></div>
+    ${c?.requested_at ? `<div class="line"><span>Permintaan dikirim</span><span>${new Date(c.requested_at).toLocaleString("id-ID")}</span></div>` : ""}
+    <p class="muted small" style="margin-top:12px">Koneksi ke ${esc(name)} memakai API resmi dan izin partner. Setelah permintaan dikirim, admin platform memproses persetujuan dan memasang koneksi. Toko Anda tidak perlu memasukkan kunci API sendiri.</p>
+    <div class="row"><button class="btn" type="button" id="mpreq" ${canRequest ? "" : "disabled"}>${status === "diminta" ? "Permintaan sudah dikirim" : status === "terhubung" ? "Sudah terhubung" : "Hubungkan " + esc(name)}</button></div>
+    <p id="mpmsg"></p></div>`);
+  document.getElementById("mpreq")?.addEventListener("click", async () => {
+    const { data: st, error } = await sb.rpc("request_marketplace", { p_store: s.id, p_platform: platform });
+    if (error) return (document.getElementById("mpmsg").innerHTML = `<span class="error">${esc(error.message)}</span>`);
+    pageMpPlatform(s, platform);
+  });
+}
+
+async function pageMpRingkasan(s) {
+  dashPut(`<div class="panel"><h2>Ringkasan Integrasi</h2>
+    <div class="line"><span>Toko WA Store</span><span class="tag ok">Aktif</span></div>
+    <div class="line"><span>Marketplace</span><span class="tag used">Belum terhubung</span></div>
+    <p class="muted small" style="margin-top:12px">Koneksi ke marketplace hanya dilakukan lewat API resmi dan izin partner yang sah.</p></div>`);
+}
+
+async function pageMpKoneksi(s) {
+  dashPut(`<div class="panel"><h2>Koneksi Marketplace</h2>
+    <p class="muted">Shopee, TikTok Shop, Tokopedia, dan lainnya belum terhubung.</p>
+    <p class="muted small">Koneksi memerlukan pendaftaran sebagai partner resmi di masing-masing marketplace. Setelah izin diterima, kunci API dipasang oleh admin platform, bukan dari sini.</p>
+    <div class="row"><button class="btn outline" type="button" disabled>Belum tersedia</button></div></div>`);
+}
+
+async function pageMpInfo(s, title, text) {
+  dashPut(`<div class="panel"><h2>${esc(title)}</h2><p class="muted">${esc(text)}</p>
+    <p class="muted small">Fitur ini akan aktif setelah marketplace terhubung.</p></div>`);
+}
+
+async function pageMpPesanan(s) {
+  const { data: orders } = await sb.from("orders")
+    .select("order_number,customer_name,total,status,channel,created_at").eq("store_id", s.id).neq("channel", "web")
+    .order("created_at", { ascending: false }).limit(100);
+  dashPut(`<div class="panel"><h2>Pesanan Marketplace (${(orders || []).length})</h2>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>No.</th><th>Pembeli</th><th>Sumber</th><th>Total</th><th>Status</th></tr></thead>
+    <tbody>${(orders || []).map((o) => `<tr><td class="mono">${esc(o.order_number)}</td><td>${esc(o.customer_name)}</td><td>${esc(o.channel)}</td><td>${rp(o.total)}</td><td>${esc(STATUS_LABEL[o.status] || o.status)}</td></tr>`).join("") || `<tr><td colspan="5" class="muted">Belum ada pesanan dari marketplace.</td></tr>`}</tbody></table></div></div>`);
+}
+
+async function pagePengaturanAt(s, anchor) {
+  await pagePengaturan(s);
+}
+
+/* ---------- halaman-halaman dashboard ---------- */
+async function pageRingkasan(s) {
+  const since = new Date(Date.now() - 7 * 86400000).toISOString();
+  const [{ data: orders }, { data: prods }] = await Promise.all([
+    sb.from("orders").select("order_number,customer_name,total,status,created_at").eq("store_id", s.id).order("created_at", { ascending: false }).limit(300),
+    sb.from("products").select("name,stock,low_stock_threshold,is_active").eq("store_id", s.id),
+  ]);
+  const O = orders || [];
+  const week = O.filter((o) => o.created_at >= since && o.status !== "cancelled");
+  const omzet = week.reduce((a, o) => a + Number(o.total || 0), 0);
+  const menunggu = O.filter((o) => ["pending", "contacted"].includes(o.status)).length;
+  const menipis = (prods || []).filter((p) => p.is_active && p.stock <= p.low_stock_threshold);
+  dashPut(`
+    <div class="kpis">
+      <div class="kpi"><span>Pesanan 7 hari</span><b>${week.length}</b></div>
+      <div class="kpi"><span>Omzet 7 hari</span><b>${rp(omzet)}</b></div>
+      <div class="kpi"><span>Menunggu tindak lanjut</span><b>${menunggu}</b></div>
+      <div class="kpi"><span>Stok menipis</span><b>${menipis.length}</b></div>
+    </div>
+    <div class="panel" style="margin-top:18px"><h2>Pesanan terbaru</h2>
+      ${O.slice(0, 6).map((o) => `<div class="line"><span><b>${esc(o.order_number)}</b> · ${esc(o.customer_name)}</span><span>${rp(o.total)} · ${esc(STATUS_LABEL[o.status] || o.status)}</span></div>`).join("") || `<p class="muted">Belum ada pesanan.</p>`}
+    </div>`);
+}
+
+async function pageWA(s) {
+  const { data: t } = await sb.from("stores").select("whatsapp_number,telegram_username").eq("id", s.id).maybeSingle();
+  const { data: a } = await sb.from("agent_settings").select("owner_whatsapp").eq("store_id", s.id).maybeSingle();
+  dashPut(`<div class="panel"><h2>WhatsApp & Telegram</h2>
+    <div class="line"><span>Nomor WhatsApp toko (untuk pembeli)</span><span>${esc(t?.whatsapp_number || "belum diisi")}</span></div>
+    <div class="line"><span>Nomor penerima laporan dan notifikasi</span><span>${esc(a?.owner_whatsapp || "belum diisi")}</span></div>
+    <div class="line"><span>Username Telegram toko</span><span>${esc(t?.telegram_username ? "@" + t.telegram_username : "belum diisi")}</span></div>
+    <p class="muted small" style="margin-top:12px">Nomor penerima laporan diatur di menu Automation Center → Agen &amp; otomatisasi. Bot Telegram pemilik dipasang oleh admin platform.</p></div>`);
+}
+
+async function pageTanya(s) {
+  dashPut(`<div class="panel"><h2>Tanya analis AI</h2><p class="muted small">Pilih agen di bawah, lalu tanyakan apa saja tentang toko Anda.</p></div>`);
+  await agentChatPanel(s);
+}
+
+async function pageInsight(s) {
+  const { data } = await sb.rpc("owner_reports", { p_store: s.id, p_kind: "weekly" });
+  dashPut(`<div class="panel"><h2>Insight mingguan</h2>
+    ${(data || []).map((r) => `<div class="panel" style="margin-bottom:12px;padding:16px"><div class="line" style="border:0;padding:0"><b>${esc(r.title)}</b><span class="muted small">${new Date(r.created_at).toLocaleString("id-ID")}</span></div><div class="pre" style="margin-top:8px">${esc(r.body)}</div></div>`).join("") || `<p class="muted">Belum ada insight mingguan. Dibuat otomatis setiap Senin pagi.</p>`}
+  </div>`);
+}
+
+async function pagePenjualan(s) {
+  const { data } = await sb.from("orders").select("total,status,created_at").eq("store_id", s.id).limit(1000);
+  const O = (data || []).filter((o) => o.status !== "cancelled");
+  const hari = (d) => new Date(d).toLocaleDateString("id-ID");
+  const bulan = O.filter((o) => new Date(o.created_at) > new Date(Date.now() - 30 * 86400000));
+  dashPut(`<div class="panel"><h2>Ringkasan penjualan</h2>
+    <div class="kpis">
+      <div class="kpi"><span>Pesanan 30 hari</span><b>${bulan.length}</b></div>
+      <div class="kpi"><span>Omzet 30 hari</span><b>${rp(bulan.reduce((a, o) => a + Number(o.total || 0), 0))}</b></div>
+      <div class="kpi"><span>Total pesanan</span><b>${O.length}</b></div>
+      <div class="kpi"><span>Rata-rata per pesanan</span><b>${rp(O.length ? O.reduce((a, o) => a + Number(o.total || 0), 0) / O.length : 0)}</b></div>
+    </div>
+    <p class="muted small" style="margin-top:12px">Terakhir dihitung ${hari(Date.now())}.</p></div>`);
+}
+
+async function pageMenipis(s) {
+  const { data } = await sb.from("products").select("name,stock,low_stock_threshold").eq("store_id", s.id).eq("is_active", true).order("stock");
+  const list = (data || []).filter((p) => p.stock <= p.low_stock_threshold);
+  dashPut(`<div class="panel"><h2>Stok menipis (${list.length})</h2>
+    ${list.map((p) => `<div class="line"><span>${esc(p.name)}</span><span class="${p.stock === 0 ? "error" : "warn"}">${p.stock === 0 ? "HABIS" : "sisa " + p.stock}</span></div>`).join("") || `<p class="muted">Semua stok aman.</p>`}
+  </div>`);
+}
+
+async function pageOmzet(s) {
+  const from = new Date(Date.now() - 14 * 86400000).toISOString();
+  const { data } = await sb.from("orders").select("total,status,created_at").eq("store_id", s.id).gte("created_at", from);
+  const per = {};
+  (data || []).filter((o) => o.status !== "cancelled").forEach((o) => {
+    const k = new Date(o.created_at).toLocaleDateString("id-ID");
+    per[k] = per[k] || { n: 0, t: 0 };
+    per[k].n++; per[k].t += Number(o.total || 0);
+  });
+  dashPut(`<div class="panel"><h2>Omzet 14 hari terakhir</h2>
+    <p class="muted small">Keuntungan bersih memerlukan harga modal per produk. Saat ini yang ditampilkan omzet.</p>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Tanggal</th><th>Pesanan</th><th>Omzet</th></tr></thead>
+    <tbody>${Object.entries(per).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v.n}</td><td>${rp(v.t)}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">Belum ada data.</td></tr>`}</tbody></table></div></div>`);
+}
+
+async function pageMarketing(s) {
+  const { data } = await sb.from("broadcasts").select("id,title,body,status,created_at").eq("store_id", s.id).order("created_at", { ascending: false }).limit(50);
+  dashPut(`
+    <div class="panel"><h2>Draf promo baru</h2>
+      <p class="muted small">Draf disimpan dulu. Tidak ada pesan yang dikirim ke pelanggan dari sini.</p>
+      <form id="mf"><label>Judul</label><input name="title" required /><label>Isi pesan</label><textarea name="body" required></textarea>
+        <div class="row"><button class="btn" type="submit">Simpan draf</button></div></form>
+      <p id="msgm"></p></div>
+    <div class="panel" style="margin-top:18px"><h2>Daftar promo</h2>
+      ${(data || []).map((b) => `<div class="line"><span><b>${esc(b.title)}</b><div class="muted small">${esc(b.body)}</div></span><span class="tag ok">${esc(b.status)}</span></div>`).join("") || `<p class="muted">Belum ada promo.</p>`}</div>`);
+  document.getElementById("mf").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const x = e.target;
+    const { error: e2 } = await sb.from("broadcasts").insert({ store_id: s.id, title: x.title.value.trim(), body: x.body.value.trim(), audience: "all", status: "draft" });
+    if (e2) return (document.getElementById("msgm").innerHTML = `<span class="error">${esc(e2.message)}</span>`);
+    pageMarketing(s);
+  });
+}
+
+async function pageBundling(s) {
+  const { data: b } = await sb.from("product_bundles").select("product_id,with_product_id,times_together").eq("store_id", s.id).order("times_together", { ascending: false }).limit(30);
+  const ids = [...new Set((b || []).flatMap((x) => [x.product_id, x.with_product_id]))];
+  const { data: prods } = ids.length ? await sb.from("products").select("id,name").in("id", ids) : { data: [] };
+  const nm = Object.fromEntries((prods || []).map((p) => [p.id, p.name]));
+  dashPut(`<div class="panel"><h2>Bundling & upsell</h2>
+    <p class="muted small">Pasangan produk yang sering dibeli bersamaan. Dihitung otomatis dari pesanan.</p>
+    ${(b || []).map((x) => `<div class="line"><span>${esc(nm[x.product_id] || "?")} + ${esc(nm[x.with_product_id] || "?")}</span><span>${x.times_together}x</span></div>`).join("") || `<p class="muted">Belum ada data. Muncul setelah ada pesanan dengan lebih dari satu produk.</p>`}</div>`);
+}
+
+async function pageLaporan(s) {
+  await pageAgen(s);
+}
+
+async function pageTim(s) {
+  const { data } = await sb.from("agent_team").select("name,role,status,avatar_svg").order("sort_order");
+  dashPut(`<div class="panel"><h2>Tim agen</h2><div class="team">${(data || []).map((p) => `
+    <div class="person"><div class="person-top"><img src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(p.avatar_svg)}" alt="" /><div><b>${esc(p.name)}</b><span class="role">${esc(p.role)}</span></div></div>
+    <span class="status ${p.status === "aktif" ? "aktif" : "menunggu"}">${p.status === "aktif" ? "Aktif" : "Menunggu aktivasi"}</span></div>`).join("")}</div></div>`);
+}
+
+async function pagePaket(s) {
+  const { data: uid } = await sb.auth.getUser();
+  const { data: lic } = await sb.rpc("owner_license_info");
+  dashPut(`<div class="panel"><h2>Paket saya</h2>
+    <div class="line"><span>Toko</span><span>${esc(s.name)}</span></div>
+    <div class="line"><span>Status</span><span>${s.is_active ? "Aktif" : "Nonaktif"}</span></div>
+    <div class="line"><span>Paket</span><span>${esc(lic?.[0]?.note || "Aktif dengan kunci lisensi")}</span></div>
+    <p class="muted small" style="margin-top:12px">Pembayaran langganan belum tersedia. Hubungi admin platform untuk perpanjangan.</p></div>`);
+}
 async function agentChatPanel(s) {
   const { data: agents } = await sb.from("agent_team").select("slug,name,role,status").order("sort_order");
   const host = document.getElementById("dashbody");
@@ -1447,7 +1822,7 @@ const COURIER_OPTIONS = ["JNE", "JNT", "SPX (Shopee Express)", "Ninja Xpress", "
 
 async function pagePengaturan(s) {
   const { data: t, error } = await sb.from("stores")
-    .select("name,logo_url,description,location,couriers,payment_methods,payment_note,whatsapp_number,origin_area_id,origin_area_name").eq("id", s.id).maybeSingle();
+    .select("name,logo_url,banner_url,banner_title,banner_subtitle,description,location,couriers,payment_methods,payment_note,whatsapp_number,origin_area_id,origin_area_name").eq("id", s.id).maybeSingle();
   if (error) return dashPut(`<p class="error">${esc(error.message)}</p>`);
   const couriers = Array.isArray(t?.couriers) ? t.couriers : [];
   const methods = Array.isArray(t?.payment_methods) ? t.payment_methods : [];
@@ -1472,16 +1847,19 @@ async function pagePengaturan(s) {
   };
   dashPut(`
     <div class="panel">
-      <h2>Profil toko</h2>
+      <h2 id="sec-profil">Profil toko</h2>
       <form id="sf">
         ${plusTile("logo_url", t?.logo_url, "Logo toko")}
+        ${plusTile("banner_url", t?.banner_url, "Banner toko (disarankan 1600 × 500 px)")}
+        <label>Judul banner</label><input name="banner_title" maxlength="80" value="${esc(t?.banner_title || "")}" placeholder="mis. Promo Akhir Tahun" />
+        <label>Teks banner</label><input name="banner_subtitle" maxlength="160" value="${esc(t?.banner_subtitle || "")}" placeholder="mis. Diskon hingga 30% untuk semua produk" />
         <label>Nama toko *</label><input name="store_name" required value="${esc(t?.name || "")}" />
         <p class="muted small">Alamat link toko tidak ikut berubah. Hanya nama yang tampil di halaman dan dashboard.</p>
         <label>Deskripsi</label><textarea name="description">${esc(t?.description || "")}</textarea>
         <label>Lokasi</label><input name="location" value="${esc(t?.location || "")}" />
         <label>Nomor WhatsApp toko</label><input name="whatsapp_number" value="${esc(t?.whatsapp_number || "")}" />
 
-        <h2 style="margin-top:20px">Asal pengiriman (ongkir otomatis)</h2>
+        <h2 id="sec-asal" style="margin-top:20px">Asal pengiriman (ongkir otomatis)</h2>
         <p class="muted small">Cari kecamatan tempat toko Anda berada. Ongkir dihitung dari sini ke alamat pembeli.</p>
         <input id="oarea" placeholder="Ketik nama kecamatan (min. 3 huruf)" autocomplete="off" />
         <div id="oareas" class="areas"></div>
@@ -1489,12 +1867,12 @@ async function pagePengaturan(s) {
         <input type="hidden" name="origin_area_id" value="${esc(t?.origin_area_id || "")}" />
         <input type="hidden" name="origin_area_name" value="${esc(t?.origin_area_name || "")}" />
 
-        <h2 style="margin-top:20px">Kurir & ongkir tetap (cadangan)</h2>
+        <h2 id="sec-ongkir" style="margin-top:20px">Kurir & ongkir tetap (cadangan)</h2>
         <p class="muted small">Dipakai bila layanan ongkir otomatis sedang tidak tersedia.</p>
         <div id="couriers">${couriers.map(rowC).join("")}</div>
         <button type="button" class="btn small outline" id="addc">+ Tambah kurir</button>
 
-        <h2 style="margin-top:20px">Metode pembayaran</h2>
+        <h2 id="sec-bayar" style="margin-top:20px">Metode pembayaran</h2>
         <div id="methods">${methods.map(rowM).join("")}</div>
         <button type="button" class="btn small outline" id="addm">+ Tambah rekening atau e-wallet</button>
         <label style="margin-top:18px">Catatan pembayaran</label><textarea name="payment_note">${esc(t?.payment_note || "")}</textarea>
@@ -1503,7 +1881,7 @@ async function pagePengaturan(s) {
       </form>
     </div>
     <div class="panel" style="margin-top:18px">
-      <h2>Ganti username</h2>
+      <h2 id="sec-akun">Ganti username</h2>
       <p class="muted small">Username dipakai untuk masuk. Setelah diganti, Anda perlu masuk ulang dengan username baru.</p>
       <form id="unf">
         <label>Username baru (huruf kecil, angka, titik, garis bawah, atau minus; 3 sampai 30 karakter)</label><input name="uname" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9._-]+" />
@@ -1525,7 +1903,7 @@ async function pagePengaturan(s) {
     </div>`);
   const wire = () => document.querySelectorAll(".rm").forEach((b) => (b.onclick = () => b.parentElement.remove()));
   wire();
-  wirePlusTiles(document.getElementById("sf"), "logo");
+  wirePlusTiles(document.getElementById("sf"), "assets");
   document.getElementById("addc").onclick = () => { document.getElementById("couriers").insertAdjacentHTML("beforeend", rowC()); wire(); };
   document.getElementById("addm").onclick = () => { document.getElementById("methods").insertAdjacentHTML("beforeend", rowM()); wire(); };
 
@@ -1561,7 +1939,7 @@ async function pagePengaturan(s) {
     const newName = f.store_name.value.trim();
     if (!newName) return (document.getElementById("msgs").innerHTML = `<span class="error">Nama toko tidak boleh kosong.</span>`);
     const { error: e2 } = await sb.from("stores").update({
-      name: newName, logo_url: f.logo_url.value || null,
+      name: newName, logo_url: f.logo_url.value || null, banner_url: f.banner_url.value || null, banner_title: f.banner_title.value.trim() || null, banner_subtitle: f.banner_subtitle.value.trim() || null,
       description: f.description.value.trim() || null, location: f.location.value.trim() || null,
       whatsapp_number: f.whatsapp_number.value.trim() || null, couriers: cs, payment_methods: ms,
       payment_note: f.payment_note.value.trim() || null,
@@ -1808,6 +2186,109 @@ function wirePlusTiles(root, folder) {
     });
   });
 }
+
+const SHOP_MENU = [
+  ["beranda", "Beranda", ""], ["semua", "Semua produk", "semua"], ["kategori", "Kategori", "kategori"],
+  ["keranjang", "Keranjang", "keranjang"], ["pesanan", "Pesanan saya", "pesanan"], ["agen", "Agen & distributor", "agen"],
+  ["profil", "Profil & ulasan", "profil"], ["kontak", "Kontak", "kontak"],
+];
+async function ensureShopShell(slug, activeKey) {
+  const store = await getStore(slug);
+  if (!store) { SHOP_MODE = false; return null; }
+  SHOP_MODE = true;
+  const count = getCart().filter((i) => i.slug === slug).reduce((a, i) => a + Number(i.qty || 0), 0);
+  app.innerHTML = `
+    <div class="shop">
+      <aside class="snavwrap">
+        <div class="shopbrand"><span class="avatar sm">${esc(initials(store.name))}</span><div><b>${esc(store.name)}</b><small>${esc(store.location || "Toko online")}</small></div></div>
+        <nav class="dnav">${SHOP_MENU.map(([k, l, seg]) => `<a href="#/toko/${esc(slug)}${seg ? "/" + seg : ""}" class="navrow ${k === activeKey ? "on" : ""}"><span class="navic">${SHOP_ICON[k] || ""}</span><span class="navtx">${esc(l)}${k === "keranjang" && count ? ` <b class="badge-n">${count}</b>` : ""}</span></a>`).join("")}</nav>
+      </aside>
+      <section id="shopbody"></section>
+    </div>`;
+  return store;
+}
+function shopKey(parts) {
+  const seg = parts[2] || "";
+  if (!seg) return "beranda";
+  if (seg === "produk" || seg === "semua" || seg === "kategori") return seg === "kategori" ? "kategori" : "semua";
+  if (seg === "agen" || seg === "distributor") return "agen";
+  if (seg === "keranjang" || seg === "checkout") return "keranjang";
+  if (seg === "pesanan" || seg === "sukses") return "pesanan";
+  if (seg === "profil" || seg === "ulasan") return "profil";
+  if (seg === "kontak") return "kontak";
+  return "beranda";
+}
+
+/* ---------- etalase: semua produk, kategori, profil, kontak, ulasan ---------- */
+async function renderStoreAll(slug, catId) {
+  setView(`<p class="muted">Memuat produk…</p>`);
+  const store = await getStore(slug);
+  if (!store) return setView(`<div class="panel">Toko tidak ditemukan.</div>`);
+  const [{ data: prods }, { data: cats }] = await Promise.all([
+    sb.from("products").select("id,name,slug,image_url,price,sale_price,stock,category_id").eq("store_id", store.id).eq("is_active", true).order("name"),
+    sb.rpc("store_categories", { p_slug: slug }),
+  ]);
+  const P = (prods || []).filter((p) => !catId || p.category_id === catId);
+  const catName = (cats || []).find((c) => c.id === catId)?.name;
+  setView(`
+    <div class="pagehead"><h1>${catId ? esc(catName || "Kategori") : "Semua produk"}</h1><p class="muted">${P.length} produk</p></div>
+    <div class="searchbar"><input id="q" placeholder="Cari produk…" autocomplete="off" /></div>
+    <div class="chips">
+      <a class="chip ${!catId ? "on" : ""}" href="#/toko/${esc(slug)}/semua">Semua</a>
+      ${(cats || []).map((c) => `<a class="chip ${c.id === catId ? "on" : ""}" href="#/toko/${esc(slug)}/kategori/${esc(c.id)}">${esc(c.name)}</a>`).join("")}
+    </div>
+    <div class="grid" id="plist">
+      ${P.map((p) => `
+        <a class="card" href="#/toko/${esc(slug)}/produk/${esc(p.slug)}" data-n="${esc(p.name.toLowerCase())}">
+          ${p.image_url ? `<img class="thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy" />` : `<div class="thumb ph2">${productIcon(p.name)}</div>`}
+          <h3>${esc(p.name)}</h3>
+          <div class="price">${p.sale_price ? `<s>${rp(p.price)}</s>${rp(p.sale_price)}` : rp(p.price)}</div>
+          <div class="stock">${p.stock > 0 ? `Stok ${p.stock}` : "Stok habis"}</div>
+        </a>`).join("") || `<p class="muted">Belum ada produk.</p>`}
+    </div>`);
+  document.getElementById("q").addEventListener("input", (e) => {
+    const t = e.target.value.trim().toLowerCase();
+    document.querySelectorAll("#plist .card").forEach((c) => (c.style.display = !t || c.dataset.n.includes(t) ? "" : "none"));
+  });
+}
+
+async function renderStoreProfile(slug) {
+  setView(`<p class="muted">Memuat…</p>`);
+  const store = await getStore(slug);
+  if (!store) return setView(`<div class="panel">Toko tidak ditemukan.</div>`);
+  const { data: rev } = await sb.from("store_reviews").select("reviewer_name,rating,comment,created_at").eq("store_id", store.id).eq("approved", true).order("created_at", { ascending: false }).limit(50);
+  const avg = (rev || []).length ? (rev.reduce((a, r) => a + r.rating, 0) / rev.length).toFixed(1) : null;
+  const wa = waLink(store.whatsapp_number, `Halo ${store.name}, saya mau tanya.`);
+  setView(`
+    <div class="pagehead"><h1>${esc(store.name)}</h1><p class="muted">${esc(store.location || "")}</p></div>
+    <div class="panel"><h2>Tentang toko</h2><p class="muted">${esc(store.description || "Belum ada deskripsi toko.")}</p>
+      ${avg ? `<p><b class="gold">★ ${avg}</b> dari ${rev.length} ulasan</p>` : ""}</div>
+    <div class="panel" style="margin-top:18px" id="kontak"><h2>Kontak</h2>
+      <div class="row">
+        ${wa ? `<a class="btn wa" href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ""}
+        ${store.telegram_username ? `<a class="btn telegram" href="https://t.me/${esc(store.telegram_username)}" target="_blank" rel="noopener">Telegram</a>` : ""}
+        ${!wa && !store.telegram_username ? `<span class="muted">Kontak belum diisi penjual.</span>` : ""}
+      </div></div>
+    <div class="panel" style="margin-top:18px"><h2>Ulasan pelanggan</h2>
+      ${(rev || []).map((r) => `<div class="line" style="display:block"><b>${esc(r.reviewer_name)}</b> <span class="gold">${"★".repeat(r.rating)}</span>${r.comment ? `<p class="muted small" style="margin:4px 0 0">${esc(r.comment)}</p>` : ""}</div>`).join("") || `<p class="muted">Belum ada ulasan.</p>`}
+      <form id="revf" style="margin-top:16px">
+        <h3>Tulis ulasan</h3>
+        <label>Nama</label><input name="name" required minlength="2" maxlength="60" />
+        <label>Nilai</label><select name="rating"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select>
+        <label>Komentar (opsional)</label><textarea name="comment" maxlength="500"></textarea>
+        <div class="row"><button class="btn" type="submit">Kirim ulasan</button></div>
+        <p class="muted small">Ulasan tampil setelah disetujui penjual.</p>
+        <p id="revmsg"></p>
+      </form></div>`);
+  document.getElementById("revf").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const { error } = await sb.from("store_reviews").insert({ store_id: store.id, reviewer_name: f.name.value.trim(), rating: Number(f.rating.value), comment: f.comment.value.trim() || null, approved: false });
+    document.getElementById("revmsg").innerHTML = error ? `<span class="error">${esc(error.message)}</span>` : `<span class="ok">Terima kasih! Ulasan Anda akan tampil setelah disetujui.</span>`;
+    if (!error) f.reset();
+  });
+}
+
 /* ---------- bundling / upsell di halaman produk ---------- */
 async function loadBundles(p, slug, storeId) {
   const host = document.getElementById("bundle");
@@ -1971,6 +2452,7 @@ async function renderAdmin() {
 async function route() {
   updateCartCount();
   unmountChat();
+  SHOP_MODE = false;
   const raw = (location.hash || "#/").slice(1);
   const [path, qs] = raw.split("?");
   const q = new URLSearchParams(qs || "");
@@ -1979,12 +2461,17 @@ async function route() {
     if (parts.length === 0) return renderHome();
     if (parts[0] === "tim") return renderTeam();
     if (parts[0] === "daftar") return renderDaftar();
-    if (parts[0] === "dashboard") return renderDashboard(parts[1] || "");
+    if (parts[0] === "dashboard") return renderDashboard(parts[1] || "produk");
     if (parts[0] === "admin") return renderAdmin();
     if (parts[0] === "masuk") return renderMasuk();
     if (parts[0] === "keranjang") return renderCart(null);
     if (parts[0] === "toko" && parts[1]) {
       mountChat(parts[1]);
+      const sh = await ensureShopShell(parts[1], shopKey(parts));
+      if (!sh) return setView(`<div class="panel">Toko tidak ditemukan.</div>`);
+      if (parts[2] === "semua" || parts[2] === "produk" && !parts[3]) return renderStoreAll(parts[1], "");
+      if (parts[2] === "kategori") return renderStoreAll(parts[1], parts[3] || "");
+      if (parts[2] === "profil" || parts[2] === "kontak") return renderStoreProfile(parts[1]);
       const slug = parts[1];
       if (parts.length === 2) return renderStore(slug);
       if (parts[2] === "produk" && parts[3]) return renderProduct(slug, parts[3]);
