@@ -553,6 +553,22 @@ input[type="checkbox"], input[type="radio"] { background: initial !important; co
   .navrow { min-height: 46px; }
 }
 
+/* ===== SIDEBAR FINAL (rapi, rata kiri, tanpa judul merek) ===== */
+.side { display: flex; flex-direction: column; align-items: stretch; text-align: left; padding: 14px 12px; gap: 10px; }
+.sidestore { width: 100%; box-sizing: border-box; }
+.sidenav { display: flex; flex-direction: column; align-items: stretch; gap: 4px; width: 100%; }
+.sidenav .navrow,
+.side .navrow {
+  display: flex; align-items: center; justify-content: flex-start; width: 100%; box-sizing: border-box;
+  min-height: 44px; padding: 10px 14px; margin: 0; text-align: left; gap: 14px;
+}
+.side .navic { width: 22px; min-width: 22px; height: 22px; margin: 0; }
+.side .navtx { text-align: left; flex: 1 1 auto; }
+.grouphead { align-items: flex-start; text-align: left; margin: 16px 6px 4px; }
+.subnav { width: 100%; box-sizing: border-box; margin: 0 0 6px 0; padding: 2px 0 2px 26px; border-left: 1px dashed rgba(255,200,46,.45); margin-left: 24px; }
+.subrow { display: flex; align-items: center; justify-content: flex-start; width: 100%; box-sizing: border-box; text-align: left; }
+.upgrade { width: 100%; box-sizing: border-box; }
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -1478,7 +1494,7 @@ function dashNav(active, s) {
   const row = (k, l, cls, badge) => `<a href="#/dashboard/${k}" class="navrow ${cls}"><span class="navic">${ICON[k] || ""}</span><span class="navtx">${esc(l)}</span>${badge ? `<span class="nbadge">${badge}</span>` : ""}</a>`;
   const subrow = (k, l, cls) => `<a href="#/dashboard/${k}" class="subrow ${cls}"><span class="dot"></span><span class="navtx">${esc(l)}</span></a>`;
   return `<aside class="side">
-    ${sideBrand()}
+    
     ${s ? sideStore(s) : ""}
     <nav class="sidenav">${DASH_GROUPS.map((g) => `
       ${g.heading ? `<div class="grouphead"><b>${esc(g.heading)}</b>${g.sub ? `<span class="gsub">${esc(g.sub)} <em class="nbadge">Baru</em></span>` : ""}</div>` : ""}
@@ -2257,7 +2273,7 @@ async function ensureShopShell(slug, activeKey) {
   app.innerHTML = `
     <div class="shop">
       <aside class="side">
-        ${sideBrand()}
+        
         ${sideStore(store, store.location || "Toko online")}
         <nav class="sidenav">${SHOP_MENU.map(([k, l, seg]) => `<a href="#/toko/${esc(slug)}${seg ? "/" + seg : ""}" class="navrow ${k === activeKey ? "on" : ""}"><span class="navic">${SHOP_ICON[k] || ""}</span><span class="navtx">${esc(l)}</span>${k === "keranjang" && count ? `<span class="nbadge">${count}</span>` : ""}</a>`).join("")}</nav>
         <a class="upgrade wa" href="${esc(waLink(store.whatsapp_number, "Halo " + store.name) || "#/tim")}" target="_blank" rel="noopener">Hubungi via WhatsApp</a>
