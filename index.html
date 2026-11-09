@@ -569,6 +569,17 @@ input[type="checkbox"], input[type="radio"] { background: initial !important; co
 .subrow { display: flex; align-items: center; justify-content: flex-start; width: 100%; box-sizing: border-box; text-align: left; }
 .upgrade { width: 100%; box-sizing: border-box; }
 
+/* ===== Semburat putih tipis: HANYA etalase toko publik (bukan dashboard pemilik) ===== */
+.publicshop #shopbody { position: relative; }
+.publicshop #shopbody::before {
+  content: ""; position: absolute; left: -40px; right: -40px; top: -60px; height: 520px; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at 22% 18%, rgba(255,255,255,.16), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 78% 8%, rgba(255,255,255,.12), transparent 70%),
+    radial-gradient(ellipse 60% 35% at 50% 60%, rgba(255,255,255,.06), transparent 75%);
+}
+.publicshop #shopbody > * { position: relative; z-index: 1; }
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -2271,7 +2282,7 @@ async function ensureShopShell(slug, activeKey) {
   SHOP_MODE = true;
   const count = getCart().filter((i) => i.slug === slug).reduce((a, i) => a + Number(i.qty || 0), 0);
   app.innerHTML = `
-    <div class="shop">
+    <div class="shop publicshop">
       <aside class="side">
         
         ${sideStore(store, store.location || "Toko online")}
