@@ -1256,6 +1256,7 @@ function renderMasuk() {
         <div class="row"><button class="btn" type="submit" id="loginbtn">Masuk</button></div>
       </form>
       <p class="muted small">Belum punya toko? <a href="#/daftar" style="color:var(--gold-2)">Daftar dengan kunci lisensi</a></p>
+      <p class="muted small">Lupa password? <a href="#/lupa" style="color:var(--gold-2)">Atur ulang password</a></p>
       <p id="msg"></p>
     </div>`);
   const form = document.getElementById("login");
@@ -1270,8 +1271,9 @@ function renderMasuk() {
       const { error } = await withTimeout(sb.auth.signInWithPassword({ email: toEmail(u), password: pw }));
       if (error) throw new Error(friendlyAuth(error.message));
       const { data: isAdmin } = await withTimeout(sb.rpc("is_platform_admin"));
+      const { data: mustChange } = await withTimeout(sb.rpc("my_must_change"));
       toast("Berhasil masuk.");
-      location.hash = isAdmin ? "#/admin" : "#/dashboard";
+      location.hash = mustChange ? "#/dashboard/pengaturan" : (isAdmin ? "#/admin" : "#/dashboard");
     } catch (err) {
       toast(err.message || "Gagal masuk. Coba lagi.", "error");
     } finally {
@@ -1537,8 +1539,10 @@ async function renderDashboard(page = "produk") {
   const s = stores[0];
   const key = DASH_LABEL[page] ? page : "produk";
   const { data: isAdmin } = await sb.rpc("is_platform_admin");
+  const { data: mustChange } = await sb.rpc("my_must_change");
   setView(`
     ${isAdmin ? `<div class="panel" style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span>Anda masuk sebagai <b>admin platform</b>.</span><a class="btn small" href="#/admin">Buka panel admin</a></div>` : ""}
+    ${mustChange ? `<div class="panel" style="margin-bottom:18px;border-color:#ffc52e"><b>Password Anda masih password sementara.</b> Silakan ganti sekarang lewat menu Pengaturan Toko, bagian Ganti password.</div>` : ""}
     <div class="store-head">
       <span class="avatar">${esc(initials(s.name))}</span>
       <div><h1>${esc(s.name)}</h1><div class="muted">Dashboard pemilik · <a href="#/toko/${esc(s.slug)}" style="color:var(--gold-2)">lihat toko</a></div></div>
@@ -2090,6 +2094,7 @@ async function pagePengaturan(s) {
       if (check.error) throw new Error("Password lama tidak cocok.");
       const { error } = await sb.auth.updateUser({ password: f.new1.value });
       if (error) throw new Error(friendlyAuth(error.message));
+      await sb.rpc("clear_must_change");
       out.innerHTML = `<span class="ok">Password berhasil diganti.</span>`;
       f.reset();
     } catch (err) {
@@ -2528,12 +2533,19 @@ async function renderAdmin() {
     <div class="panel" style="margin-top:18px">
       <h2>Akun terdaftar</h2>
       <div style="overflow-x:auto"><table class="tbl">
-        <thead><tr><th>Username</th><th>Dibuat</th><th>Terakhir masuk</th><th>Toko</th></tr></thead>
+        <thead><tr><th>Username</th><th>Dibuat</th><th>Terakhir masuk</th><th>Toko</th><th></th></tr></thead>
         <tbody>${A.map((a) => `<tr>
-          <td><b>${esc(a.username)}</b></td><td>${when(a.created_at)}</td><td>${when(a.last_sign_in_at)}</td><td>${esc(a.stores)}</td></tr>`).join("") || `<tr><td colspan="4" class="muted">Belum ada akun.</td></tr>`}</tbody>
+          <td><b>${esc(a.username)}</b></td><td>${when(a.created_at)}</td><td>${when(a.last_sign_in_at)}</td><td>${esc(a.stores)}</td>
+          <td><button class="btn small outline" data-reset="${esc(a.user_id)}" data-name="${esc(a.username)}">Reset password</button></td></tr>`).join("") || `<tr><td colspan="5" class="muted">Belum ada akun.</td></tr>`}</tbody>
       </table></div>
     </div>`);
 
+  document.querySelectorAll("[data-reset]").forEach((b) => b.addEventListener("click", async () => {
+    if (!confirm(`Buat password sementara untuk ${b.dataset.name}?`)) return;
+    const { data, error } = await sb.rpc("admin_reset_password", { p_user: b.dataset.reset });
+    if (error) return toast(error.message, "error");
+    alert(`Password sementara untuk ${b.dataset.name}:\n\n${data}\n\nSampaikan ke pemilik lewat WhatsApp. Catatan ini hanya tampil sekali. Pemilik akan diminta mengganti password saat masuk.`);
+  }));
   document.getElementById("mk").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target;
@@ -2541,6 +2553,61 @@ async function renderAdmin() {
     if (error) return toast(error.message, "error");
     lastNewKeys = (data || []).map((r) => (typeof r === "string" ? r : r.admin_create_license_keys));
     renderAdmin();
+  });
+}
+
+
+/* ---------- lupa password: kode ke WhatsApp pemilik, lalu password sementara otomatis ---------- */
+function renderLupa() {
+  setView(`
+    <div class="panel narrow">
+      <h1>Lupa password</h1>
+      <p class="muted">Kode konfirmasi dikirim ke Telegram pemilik toko yang terdaftar. Setelah kode benar, password sementara juga dikirim ke Telegram yang sama.</p>
+      <form id="lupa1">
+        <label>Username</label><input name="username" required autocomplete="username" />
+        <div class="row"><button class="btn" type="submit" id="lupabtn">Kirim kode</button></div>
+      </form>
+      <form id="lupa2" hidden style="margin-top:18px">
+        <label>Kode 6 digit dari Telegram</label><input name="code" inputmode="numeric" maxlength="6" required />
+        <div class="row"><button class="btn" type="submit" id="lupabtn2">Dapatkan password sementara</button></div>
+      </form>
+      <p id="lupamsg" style="margin-top:14px"></p>
+      <p class="muted small">Tidak menerima kode? Hubungi admin di WhatsApp 089526628341.</p>
+      <p class="muted small"><a href="#/masuk" style="color:var(--gold-2)">Kembali ke halaman masuk</a></p>
+    </div>`);
+  let uname = "";
+  const msg = (t, cls) => (document.getElementById("lupamsg").innerHTML = `<span class="${cls}">${esc(t)}</span>`);
+  document.getElementById("lupa1").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    uname = e.target.username.value.trim().toLowerCase();
+    const btn = document.getElementById("lupabtn"); btn.disabled = true;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/password-reset`, {
+        method: "POST", headers: { "Content-Type": "application/json", apikey: SUPABASE_KEY },
+        body: JSON.stringify({ action: "request", username: uname }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!j.ok) throw new Error(j.error || "Gagal mengirim kode.");
+      msg(j.message, "ok");
+      document.getElementById("lupa2").hidden = false;
+    } catch (err) { msg(err.message, "error"); }
+    finally { btn.disabled = false; }
+  });
+  document.getElementById("lupa2").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("lupabtn2"); btn.disabled = true;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/password-reset`, {
+        method: "POST", headers: { "Content-Type": "application/json", apikey: SUPABASE_KEY },
+        body: JSON.stringify({ action: "verify", username: uname, code: e.target.code.value.trim() }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!j.ok) throw new Error(j.error || "Kode tidak valid.");
+      msg(j.message, "ok");
+      document.getElementById("lupa2").hidden = true;
+      setTimeout(() => (location.hash = "#/masuk"), 4000);
+    } catch (err) { msg(err.message, "error"); }
+    finally { btn.disabled = false; }
   });
 }
 
@@ -2560,6 +2627,7 @@ async function route() {
     if (parts[0] === "dashboard") return renderDashboard(parts[1] || "produk");
     if (parts[0] === "admin") return renderAdmin();
     if (parts[0] === "masuk") return renderMasuk();
+    if (parts[0] === "lupa") return renderLupa();
     if (parts[0] === "keranjang") return renderCart(null);
     if (parts[0] === "toko" && parts[1]) {
       mountChat(parts[1]);
