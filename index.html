@@ -569,16 +569,26 @@ input[type="checkbox"], input[type="radio"] { background: initial !important; co
 .subrow { display: flex; align-items: center; justify-content: flex-start; width: 100%; box-sizing: border-box; text-align: left; }
 .upgrade { width: 100%; box-sizing: border-box; }
 
-/* ===== Semburat putih tipis: HANYA etalase toko publik (bukan dashboard pemilik) ===== */
-.publicshop #shopbody { position: relative; }
-.publicshop #shopbody::before {
-  content: ""; position: absolute; left: -40px; right: -40px; top: -60px; height: 520px; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(ellipse 55% 45% at 22% 18%, rgba(255,255,255,.16), transparent 70%),
-    radial-gradient(ellipse 45% 40% at 78% 8%, rgba(255,255,255,.12), transparent 70%),
-    radial-gradient(ellipse 60% 35% at 50% 60%, rgba(255,255,255,.06), transparent 75%);
+
+/* ===== Latar area konten toko publik: putih (sidebar tetap seperti semula) ===== */
+.publicshop #shopbody {
+  background: #ffffff; border-radius: 22px; padding: 22px 22px 30px; min-height: 60vh;
 }
-.publicshop #shopbody > * { position: relative; z-index: 1; }
+/* teks di luar kartu tetap terbaca di latar putih */
+.publicshop #shopbody > h1,
+.publicshop #shopbody > p,
+.publicshop #shopbody .pagehead h1,
+.publicshop #shopbody .pagehead p,
+.publicshop #shopbody .store-head h1,
+.publicshop #shopbody > .store-head div { color: #0b1f4d; }
+.publicshop #shopbody > .store-head .muted,
+.publicshop #shopbody .pagehead .muted,
+.publicshop #shopbody > p.muted { color: #4a5a7a; }
+.publicshop #shopbody .avatar { color: #1a1408; }
+/* kartu (panel) tetap biru navy */
+.publicshop #shopbody .panel { background: linear-gradient(180deg, #0d2f80, #0a2466); color: #f4f8ff; }
+.publicshop #shopbody .panel h2, .publicshop #shopbody .panel h3 { color: #ffffff; }
+.publicshop #shopbody .panel .muted { color: #a9c0ea; }
 
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>

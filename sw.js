@@ -1,6 +1,6 @@
 // WA Store: service worker minimal agar aplikasi bisa dipasang (installable).
 // Data toko selalu diambil dari jaringan. Hanya berkas aplikasi yang disimpan sementara.
-const CACHE = "wa-store-v2";
+const CACHE = "wa-store-v3";
 const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
