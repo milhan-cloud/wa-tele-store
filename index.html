@@ -590,6 +590,52 @@ input[type="checkbox"], input[type="radio"] { background: initial !important; co
 .publicshop #shopbody .panel h2, .publicshop #shopbody .panel h3 { color: #ffffff; }
 .publicshop #shopbody .panel .muted { color: #a9c0ea; }
 
+/* ===== Demo: halaman marketplace dengan warna brand ===== */
+.platcard { background: var(--panel); border: 1px solid rgba(255,200,46,.35); border-radius: 22px; padding: 22px; box-shadow: 0 16px 36px rgba(0,0,0,.3); }
+.plathead { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 18px; background: var(--pc); color: var(--pt); margin-bottom: 18px; flex-wrap: wrap; }
+.plathead h2 { margin: 0; color: var(--pt); }
+.plathead small { opacity: .9; }
+.platmark { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.18); font-size: 28px; font-weight: 900; color: var(--pt); }
+.platstatus { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.2); padding: 6px 12px; border-radius: 999px; font-weight: 700; font-size: 13px; }
+.platstatus i { width: 9px; height: 9px; border-radius: 50%; background: #34d399; display: inline-block; }
+.platgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+.platbox { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 14px; }
+.platbox span { display: block; font-size: 12px; color: var(--muted); }
+.platbox b { font-size: 18px; color: var(--gold-2); }
+.platlist { margin-top: 6px; }
+@media (max-width: 560px) { .platgrid { grid-template-columns: 1fr; } }
+
+/* ===== Demo: grafik, kartu agen, promosi, dan pengaturan ===== */
+.sgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.sbig { background: var(--panel); border: 1px solid rgba(255,200,46,.3); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden; }
+.sbig span { font-size: 12px; color: var(--muted); }
+.sbig b { font-size: 22px; color: var(--gold-2); }
+.ddonut { width: 120px; height: 120px; border-radius: 50%; margin-top: 6px; display: flex; align-items: center; justify-content: center; }
+.dhole { width: 84px; height: 84px; border-radius: 50%; background: var(--panel-solid); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.dhole b { font-size: 16px; color: #fff; }
+.dhole span { font-size: 10px; color: var(--muted); }
+.pulse { width: 14px; height: 14px; border-radius: 50%; background: #34d399; box-shadow: 0 0 0 0 rgba(52,211,153,.7); animation: pl 1.8s infinite; margin-top: 6px; }
+@keyframes pl { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,.7); } 100% { box-shadow: 0 0 0 16px rgba(52,211,153,0); } }
+.dbars { display: flex; align-items: flex-end; gap: 10px; height: 180px; padding-top: 10px; }
+.dbcol { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.dbfill { width: 100%; border-radius: 10px 10px 4px 4px; min-height: 4px; }
+.dbcol span { font-size: 11px; color: var(--muted); margin-top: 6px; text-align: center; }
+.dline { width: 100%; height: 220px; }
+.dlbl { font-size: 11px; fill: #a9c0ea; }
+.promohead { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.promohead h2 { margin: 8px 0 4px; font-size: 24px; }
+.pstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.chatbubble { background: #dcf8c6; color: #111; border-radius: 16px 16px 4px 16px; padding: 14px; max-width: 520px; font-size: 14px; line-height: 1.5; }
+.agentgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+.agentcard { background: var(--panel); border: 1px solid rgba(255,200,46,.3); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; text-align: left; color: var(--text); font: inherit; cursor: pointer; transition: transform .15s; }
+.agentcard:hover { transform: translateY(-3px); border-color: var(--gold); }
+.agentcard .dav { border-radius: 16px; }
+.agentcard .role { display: inline-block; background: #ffc52e; color: #1a1408; font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 9px; }
+.agentcard .open { color: var(--gold-2); font-size: 13px; font-weight: 700; margin-top: 4px; }
+.dlog { display: flex; flex-direction: column; gap: 10px; max-height: 320px; min-height: 160px; overflow-y: auto; margin: 12px 0; padding: 12px; border: 1px solid rgba(37,211,102,.35); border-radius: 14px; background: #0b1a16; }
+.dlog .bubble.me { background: #dcf8c6; color: #111; align-self: flex-end; }
+.dlog .bubble.bot { background: rgba(255,255,255,.07); align-self: flex-start; }
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -2619,11 +2665,16 @@ const DEMO_BANNER = `<div class="panel" style="margin-bottom:18px;border-color:#
   <span><b>Ini versi demo.</b> Data contoh dari Toko Maju, tidak tersimpan.</span>
   <a class="btn small" href="#/daftar">Daftar toko sungguhan</a></div>`;
 
+
+function demoGroups() {
+  return DASH_GROUPS.map((g) => ({ ...g, items: g.items.map(([k, l, kids]) => (k === "mp-koneksi" ? [k, l, [...kids, ["mp-tokopedia", "Tokopedia"]]] : [k, l, kids])) }));
+}
+
 function demoNav(prefix, active) {
   const row = (k, l, cls) => `<a href="${prefix}/${k}" class="navrow ${cls}"><span class="navic">${ICON[k] || ""}</span><span class="navtx">${esc(l)}</span></a>`;
   return `<aside class="side">
     <div class="sidestore"><span class="avatar sm">TM</span><div><b>${esc(DEMO_STORE.name)}</b><small class="gold">Premium Plan</small></div></div>
-    <nav class="sidenav">${DASH_GROUPS.map((g) => `
+    <nav class="sidenav">${demoGroups().map((g) => `
       ${g.heading ? `<div class="grouphead"><b>${esc(g.heading)}</b>${g.sub ? `<span class="gsub">${esc(g.sub)} <em class="nbadge">Baru</em></span>` : ""}</div>` : ""}
       ${g.items.map(([k, l, kids]) => `
         ${row(k, l, k === active || (kids || []).some(([ck]) => ck === active) ? "on" : "")}
@@ -2632,7 +2683,74 @@ function demoNav(prefix, active) {
   </aside>`;
 }
 
+function demoSpecial(key) {
+  if (key === "mp-produk") {
+    const rows = [["Baseball Cap", "Rp 89.000", "55", "Tersinkron"], ["Canvas Shoes", "Rp 189.000", "29", "Tersinkron"], ["Casual T-Shirt", "Rp 119.000", "60", "Tersinkron"], ["Classic Sneakers", "Rp 329.000", "18", "Menunggu"], ["Leather Wallet", "Rp 159.000", "40", "Tersinkron"], ["Minimal Backpack", "Rp 389.000", "12", "Tersinkron"], ["Premium Socks", "Rp 39.000", "80", "Tersinkron"], ["Running Shoes", "Rp 299.000", "24", "Gagal, cek ulang"]];
+    const ok = rows.filter((r) => r[3] === "Tersinkron").length;
+    return `<div class="sgrid"><div class="sbig"><span>Produk tersinkron</span><b>${ok} / ${rows.length}</b>${demoDonut([["tersinkron", Math.round((ok / rows.length) * 100), "#ee4d2d"], ["sisa", 100 - Math.round((ok / rows.length) * 100), "rgba(255,255,255,.12)"]])}</div>
+      <div class="sbig"><span>Sinkron terakhir</span><b>2 menit lalu</b><p class="muted small">Berikutnya otomatis dalam 10 menit</p><div class="pulse"></div></div>
+      <div class="sbig"><span>Produk baru minggu ini</span><b>3</b><p class="muted small">Dikirim ke Shopee dan TikTok Shop</p></div></div>
+      <div class="panel"><h2>Daftar produk tersinkron</h2><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Produk</th><th>Harga</th><th>Stok</th><th>Status</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td><span class="tag ${r[3] === "Tersinkron" ? "ok" : "used"}">${esc(r[3])}</span></td></tr>`).join("")}</tbody></table></div></div>`;
+  }
+  if (key === "mp-stok") {
+    const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+    const total = [412, 398, 401, 377, 365, 352, 341];
+    const log = [["-2", "Running Shoes", "Pesanan Shopee #INV-0001", "09.12"], ["-1", "Canvas Shoes", "Pesanan Web #INV-0002", "09.40"], ["+10", "Baseball Cap", "Input manual pemilik", "10.05"], ["-3", "Casual T-Shirt", "Pesanan TikTok Shop", "11.18"], ["-1", "Leather Wallet", "Pesanan Web #INV-0003", "12.02"], ["+20", "Premium Socks", "Restok dari gudang", "13.30"]];
+    return `<div class="panel"><h2>Stok total 7 hari terakhir</h2>${demoLine(total, days, "#16a34a")}</div>
+      <div class="sgrid" style="margin-top:18px"><div class="sbig"><span>Stok tersinkron</span><b>341 pcs</b><p class="muted small">Dari 8 produk</p></div>
+      <div class="sbig"><span>Perlu diisi ulang</span><b class="warn">2 produk</b><p class="muted small">Leather Wallet, Minimal Backpack</p></div>
+      <div class="sbig"><span>Perubahan hari ini</span><b>${log.length} kali</b><p class="muted small">Semua tercatat otomatis</p></div></div>
+      <div class="panel" style="margin-top:18px"><h2>Log perubahan stok</h2>${log.map((l) => `<div class="line"><span><b class="${l[0].startsWith("+") ? "ok" : "warn"}">${esc(l[0])}</b> ${esc(l[1])} <span class="muted small">· ${esc(l[2])}</span></span><span class="muted small">${esc(l[3])}</span></div>`).join("")}</div>`;
+  }
+  if (key === "promosi") {
+    const targets = [["0812-3345-1101", "Rina", "Sudah dibaca"], ["0813-2210-4402", "Budi", "Terkirim"], ["0857-6612-7703", "Sari", "Sudah diklik"], ["0821-9900-8814", "Andi", "Terkirim"], ["0878-1122-3305", "Dewi", "Belum dibaca"], ["0896-4410-2219", "Yoga", "Sudah dibaca"]];
+    return `<div class="promohead"><div><span class="pill">Broadcast</span><h2>Promo Akhir Pekan</h2><p class="muted">Diskon 20% untuk semua sepatu. Berlaku Sabtu dan Minggu.</p></div><button class="btn small" type="button" disabled>Kirim sekarang</button></div>
+      <div class="pstats"><div class="sbig"><span>Terkirim</span><b>312</b></div><div class="sbig"><span>Dibaca</span><b>248</b></div><div class="sbig"><span>Diklik</span><b>57</b></div><div class="sbig"><span>Pesanan dari promo</span><b>18</b></div></div>
+      <div class="panel"><h2>Isi pesan</h2><div class="chatbubble">Halo Kak! Akhir pekan ini Toko Maju diskon 20% untuk semua sepatu. Canvas Shoes jadi Rp 151.200. Balas pesan ini untuk pesan sekarang.</div></div>
+      <div class="panel" style="margin-top:18px"><h2>Sasaran promosi (contoh nomor)</h2><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Nomor</th><th>Nama</th><th>Status</th></tr></thead><tbody>${targets.map((t) => `<tr><td class="mono">${esc(t[0])}</td><td>${esc(t[1])}</td><td>${esc(t[2])}</td></tr>`).join("")}</tbody></table></div><p class="muted small">Nomor di atas contoh. Di versi asli, sasaran diambil dari pelanggan yang sudah setuju menerima promosi.</p></div>`;
+  }
+  if (key === "agen-laporan") {
+    return `<div class="agentgrid">${DEMO_AGENTS.map((a, i) => `<button type="button" class="agentcard" data-agent="${i}">${demoAvatar(a.n, a.c, 64)}<b>${esc(a.n)}</b><span class="role">${esc(a.r)}</span><span class="muted small">${esc(a.t)}</span><span class="open">Chat sekarang →</span></button>`).join("")}</div>
+      <div class="panel" id="agentchat" style="margin-top:18px"><h2>Chat dengan agen</h2><p class="muted small">Pilih agen di atas. Calon pelanggan juga bisa bertanya seperti ini.</p><div class="dlog" id="dlog"><div class="bubble bot">Pilih agen untuk mulai chat.</div></div>
+        <form id="dform" class="agForm"><input name="q" placeholder="Tulis pertanyaan…" autocomplete="off" /><button class="btn small" type="submit">Kirim</button></form></div>
+      <div class="panel" style="margin-top:18px"><h2>Laporan terbaru</h2>
+        <div class="line"><span><b>Laporan malam</b> · 29 Nov</span><span class="muted small">6 pesanan · Rp 1.150.000</span></div>
+        <div class="line"><span><b>Laporan pagi</b> · 30 Nov</span><span class="muted small">Stok menipis: Leather Wallet</span></div>
+        <div class="line"><span><b>Insight mingguan</b> · 24 Nov</span><span class="muted small">Tren naik 12,5%</span></div></div>`;
+  }
+  if (key === "mp-analitik" || key === "analitik") {
+    const days = ["1 Nov", "7 Nov", "14 Nov", "21 Nov", "30 Nov"];
+    return `<div class="panel"><h2>Tren penjualan 30 hari</h2>${demoLine([8.2, 9.1, 10.4, 9.6, 12.8], days, "#ffc52e")}</div>
+      <div class="sgrid" style="margin-top:18px"><div class="panel"><h2>Produk terlaris</h2>${demoBars([42, 31, 28, 19, 12], ["Running Shoes", "Canvas", "Cap", "Sneakers", "Socks"], "#1e6bff")}</div>
+      <div class="panel"><h2>Jam ramai pesanan</h2>${demoBars([3, 5, 9, 14, 11, 7], ["09", "12", "15", "18", "20", "22"], "#16a34a")}</div></div>
+      <div class="panel" style="margin-top:18px"><h2>Analisa AI (contoh)</h2>
+        <div class="line"><span>Penjualan naik <b class="ok">12,5%</b> dibanding minggu lalu</span><span class="tag ok">Positif</span></div>
+        <div class="line"><span>Running Shoes paling laku, pertimbangkan promo bundling dengan Socks</span><span class="tag">Saran</span></div>
+        <div class="line"><span>Pesanan dari TikTok Shop naik, siapkan stok Casual T-Shirt</span><span class="tag">Saran</span></div>
+        <div class="line"><span>Pelanggan VIP belum belanja 14 hari: Budi, Andi</span><span class="tag used">Perlu perhatian</span></div></div>`;
+  }
+  if (key === "pengaturan") {
+    const dis = "disabled";
+    return `<div class="panel"><h2>Profil toko</h2>
+        <label>Nama toko</label><input value="Toko Maju" ${dis} />
+        <label>Deskripsi</label><textarea ${dis}>Fashion, sepatu, dan aksesoris pilihan untuk gaya harian.</textarea>
+        <label>Lokasi</label><input value="Bandung, Indonesia" ${dis} />
+        <label>Nomor WhatsApp toko</label><input value="0812-3456-7890" ${dis} />
+        <label>Banner toko</label><div class="uptile"><div class="upprev"><span class="plus">+</span></div><div class="upmeta"><b>Banner toko</b><span class="muted small">Ketuk + untuk pilih gambar</span></div></div>
+        <label>Judul banner</label><input value="Toko Maju" ${dis} />
+        <label>Teks banner</label><input value="Fashion, sepatu, dan aksesoris pilihan untuk gaya harian." ${dis} /></div>
+      <div class="panel" style="margin-top:18px"><h2>Asal pengiriman (ongkir otomatis)</h2><p class="muted small">Asal: Bekasi Timur, Bekasi, Jawa Barat</p></div>
+      <div class="panel" style="margin-top:18px"><h2>Kurir & ongkir tetap (cadangan)</h2>
+        ${[["JNE", "18.000"], ["JNT", "15.000"], ["SPX (Shopee Express)", "12.000"], ["Ninja Xpress", "16.000"], ["Lion Parcel", "17.000"]].map((c) => `<div class="row rowc"><select ${dis}><option>${esc(c[0])}</option></select><input value="${esc(c[1])}" ${dis} /></div>`).join("")}</div>
+      <div class="panel" style="margin-top:18px"><h2>Metode pembayaran</h2>
+        <div class="row rowm"><select ${dis}><option>Bank (transfer)</option></select><select ${dis}><option>BCA</option></select><input value="1234567890" ${dis} /><input value="Toko Maju" ${dis} /></div>
+        <div class="row rowm"><select ${dis}><option>E-wallet</option></select><select ${dis}><option>DANA</option></select><input value="081234567890" ${dis} /><input value="Toko Maju" ${dis} /></div></div>
+      <div class="panel" style="margin-top:18px"><h2>Ganti username & password</h2><p class="muted small">Di versi asli, pemilik mengganti username dan password di sini.</p><label>Password saat ini</label><input type="password" value="********" ${dis} /></div>`;
+  }
+  return null;
+}
 function demoPage(key) {
+  const sp = demoSpecial(key); if (sp) return sp;
   const K = [["Pesanan 7 hari", "42"], ["Omzet 7 hari", "Rp 6.820.000"], ["Menunggu tindak lanjut", "5"], ["Stok menipis", "2"]];
   const orders = [["#INV-20251130-001", "Rina", "Rp 285.000", "Baru", "Shopee"], ["#INV-20251130-002", "Budi", "Rp 199.000", "Diproses", "TikTok Shop"], ["#INV-20251129-003", "Sari", "Rp 320.000", "Selesai", "Web"]];
   const prods = [["Baseball Cap", "Rp 89.000", "55"], ["Canvas Shoes", "Rp 189.000", "30"], ["Casual T-Shirt", "Rp 119.000", "60"], ["Classic Sneakers", "Rp 329.000", "18"], ["Leather Wallet", "Rp 159.000", "40"], ["Minimal Backpack", "Rp 389.000", "12"], ["Premium Socks", "Rp 39.000", "80"], ["Running Shoes", "Rp 299.000", "24"]];
@@ -2642,13 +2760,82 @@ function demoPage(key) {
   if (key === "pelanggan") return `<div class="panel"><h2>Pelanggan</h2><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Nama</th><th>Telepon</th><th>Pesanan</th><th>Total belanja</th><th>Status</th></tr></thead><tbody>${custs.map((c) => `<tr><td>${esc(c[0])}</td><td>${esc(c[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${esc(c[4])}</td></tr>`).join("")}</tbody></table></div></div>`;
   if (key === "agen-distributor") return `<div class="panel"><h2>Harga agen & distributor</h2><p class="muted">Contoh: Canvas Shoes, harga umum Rp 189.000, agen Rp 165.000, distributor Rp 150.000.</p><p class="muted small">Pemilik mengatur password agen dan distributor. Agen membuka halaman harga dengan password itu.</p></div>`;
   if (key === "agen-laporan") return `<div class="panel"><h2>Laporan pagi</h2><div class="pre">Laporan penjualan kemarin: 6 pesanan, omzet Rp 1.150.000. Stok menipis: Leather Wallet (sisa 4).</div></div>`;
+  if (key === "mp-shopee" || key === "mp-tiktok" || key === "mp-tokopedia") {
+    const P = {
+      "mp-shopee": { name: "Shopee", color: "#ee4d2d", text: "#ffffff", mark: "S", sub: "Shopee Mall dan Shopee Express" },
+      "mp-tiktok": { name: "TikTok Shop", color: "#010101", text: "#ffffff", mark: "♪", sub: "TikTok Shop Indonesia" },
+      "mp-tokopedia": { name: "Tokopedia", color: "#03ac0e", text: "#ffffff", mark: "T", sub: "Tokopedia Official Store" },
+    }[key];
+    return `<div class="platcard" style="--pc:${P.color};--pt:${P.text}">
+      <div class="plathead"><span class="platmark">${P.mark}</span><div><h2>${esc(P.name)}</h2><small>${esc(P.sub)}</small></div>
+        <span class="platstatus"><i></i> Terhubung</span></div>
+      <div class="platgrid">
+        <div class="platbox"><span>Pesanan bulan ini</span><b>${key === "mp-shopee" ? "86" : key === "mp-tiktok" ? "54" : "31"}</b></div>
+        <div class="platbox"><span>Omzet bulan ini</span><b>${key === "mp-shopee" ? "Rp 14.200.000" : key === "mp-tiktok" ? "Rp 8.650.000" : "Rp 5.120.000"}</b></div>
+        <div class="platbox"><span>Produk tersinkron</span><b>8 dari 8</b></div>
+        <div class="platbox"><span>Sinkronisasi stok terakhir</span><b>2 menit lalu</b></div>
+      </div>
+      <div class="platlist">
+        <div class="line"><span>Sinkronisasi produk</span><span class="tag ok">Aktif</span></div>
+        <div class="line"><span>Sinkronisasi stok</span><span class="tag ok">Aktif</span></div>
+        <div class="line"><span>Pesanan masuk otomatis</span><span class="tag ok">Aktif</span></div>
+      </div>
+      <p class="muted small">Contoh tampilan. Di versi asli, toko terhubung setelah pemilik menyetujui izin di ${esc(P.name)}.</p>
+    </div>`;
+  }
   if (key === "mp-koneksi" || key.startsWith("mp-")) return `<div class="panel"><h2>${esc(DEMO_LABEL[key] || "Marketplace")}</h2><p class="muted">Contoh tampilan. Koneksi ke marketplace memerlukan izin resmi dari platform.</p></div>`;
   if (key === "promosi") return `<div class="panel"><h2>Draf promo</h2><div class="pre">Promo akhir pekan: diskon 20% untuk semua sepatu. Berlaku Sabtu dan Minggu.</div></div>`;
   if (key === "asisten") return `<div class="panel"><h2>Asisten AI</h2><p class="muted">Pemilik bertanya, agen menjawab dengan data toko. Contoh pertanyaan: "Produk apa yang paling laku minggu ini?"</p></div>`;
   return `<div class="panel"><h2>Pengaturan toko</h2><p class="muted">Profil toko, kurir dan ongkir, metode pembayaran, banner, username, dan password diatur di sini.</p></div>`;
 }
-const DEMO_LABEL = {};
+const DEMO_LABEL = { "mp-tokopedia": "Tokopedia" };
 DASH_GROUPS.forEach((g) => g.items.forEach(([k, l, kids]) => { DEMO_LABEL[k] = l; (kids || []).forEach(([ck, cl]) => (DEMO_LABEL[ck] = cl)); }));
+
+
+/* ---------- DEMO: helper grafik, avatar, dan halaman khusus (data contoh, tidak tersimpan) ---------- */
+function demoBars(vals, labels, color) {
+  const max = Math.max(...vals, 1);
+  return `<div class="dbars">${vals.map((v, i) => `<div class="dbcol"><div class="dbfill" style="height:${Math.round((v / max) * 100)}%;background:${color}" title="${v}"></div><span>${esc(labels[i])}</span></div>`).join("")}</div>`;
+}
+function demoLine(vals, labels, color) {
+  const max = Math.max(...vals) * 1.15, min = 0, W = 600, H = 200;
+  const pts = vals.map((v, i) => [Math.round((i / (vals.length - 1)) * W), Math.round(H - ((v - min) / (max - min)) * H)]);
+  const d = pts.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H + 24}" class="dline" preserveAspectRatio="none">
+    <defs><linearGradient id="lg${color.slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d} L${W} ${H} L0 ${H} Z" fill="url(#lg${color.slice(1)})"/><path d="${d}" fill="none" stroke="${color}" stroke-width="3"/>
+    ${pts.map((p) => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${color}"/>`).join("")}
+    ${labels.map((l, i) => `<text x="${Math.round((i / (labels.length - 1)) * W)}" y="${H + 20}" text-anchor="middle" class="dlbl">${esc(l)}</text>`).join("")}</svg>`;
+}
+function demoDonut(parts) {
+  let acc = 0; const stops = parts.map((p) => { const s = acc; acc += p[1]; return `${p[2]} ${s}% ${acc}%`; }).join(",");
+  return `<div class="ddonut" style="background:conic-gradient(${stops})"><div class="dhole"><b>${parts[0][1]}%</b><span>${esc(parts[0][0])}</span></div></div>`;
+}
+const DEMO_AGENTS = [
+  { n: "Raka", r: "Penjaga Stok", c: "#2563eb", t: "Memantau stok setiap saat dan memberi tahu pemilik saat stok menipis." },
+  { n: "Sari", r: "Penyampai Laporan", c: "#db2777", t: "Menyusun dan mengirim laporan pagi, malam, dan mingguan." },
+  { n: "Dimas", r: "Kasir Pesanan", c: "#059669", t: "Mencatat pesanan masuk dan mengurangi stok otomatis." },
+  { n: "Nadia", r: "Pengaisi Ramah", c: "#d97706", t: "Mengingatkan pelanggan dengan sopan untuk pesanan yang belum dibayar." },
+  { n: "Bima", r: "Verifikator Transfer", c: "#7c3aed", t: "Memeriksa bukti transfer yang dikirim pelanggan." },
+  { n: "Laras", r: "Pelacak Resi", c: "#0d9488", t: "Memantau status pengiriman dan mengabari pelanggan." },
+  { n: "Dinda", r: "Agen CS", c: "#16a34a", t: "Menjawab pertanyaan pelanggan soal produk, harga, stok, dan cara pembayaran." },
+  { n: "Tania", r: "Analis Penjualan", c: "#0891b2", t: "Membaca tren produk, mengenali pelanggan VIP, dan memberi ringkasan mingguan." },
+];
+function demoAvatar(name, color, size) {
+  return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" class="dav"><rect width="64" height="64" rx="16" fill="${color}" opacity=".25"/><circle cx="32" cy="26" r="11" fill="${color}"/><path d="M12 60c2-12 11-18 20-18s18 6 20 18" fill="${color}"/><text x="32" y="63" text-anchor="middle" font-size="0" fill="#fff">${esc(name)}</text></svg>`;
+}
+function demoReply(agent, q) {
+  const s = q.toLowerCase();
+  if (agent.n === "Raka") return /stok|habis|sisa/.test(s) ? "Stok Leather Wallet tinggal 4 pcs dan Minimal Backpack 12 pcs. Saya sarankan tambah stok untuk dua produk itu." : "Saat ini ada 2 produk yang stoknya hampir habis. Ada yang ingin saya cek?";
+  if (agent.n === "Sari") return "Laporan malam dikirim setiap pukul 21.00 ke Telegram pemilik. Minggu ini omzet Rp 6.820.000 dari 42 pesanan.";
+  if (agent.n === "Dimas") return "Pesanan hari ini: 6 pesanan baru. Pesanan terbaru #INV-20251130-001 dari Shopee, Rp 285.000.";
+  if (agent.n === "Nadia") return "Ada 5 pesanan yang belum dibayar. Saya bisa mengirim pengingat sopan ke pelanggan itu.";
+  if (agent.n === "Bima") return "Bukti transfer dicek dalam hitungan menit. Kirim foto bukti transfer Anda ke halaman pesanan.";
+  if (agent.n === "Laras") return "Pesanan #INV-20251129-003 sudah sampai di kurir JNE. Estimasi tiba 2 hari.";
+  if (agent.n === "Dinda") return /harga|berapa/.test(s) ? "Canvas Shoes Rp 189.000. Untuk agen harganya Rp 165.000, dan distributor Rp 150.000." : "Halo Kak, ada yang bisa saya bantu? Tanyakan produk, harga, stok, atau cara bayar ya.";
+  if (agent.n === "Tania") return "Minggu ini Running Shoes dan Canvas Shoes paling laku. Pelanggan VIP paling aktif: Rina dan Sari.";
+  return "Terima kasih sudah bertanya. Saya akan bantu sesuai data toko.";
+}
 
 function renderDemoPemilik(page) {
   const key = DEMO_LABEL[page] ? page : "produk";
@@ -2664,6 +2851,26 @@ function renderDemoPemilik(page) {
       </div>
       <div style="margin-top:18px">${demoPage(key)}</div>
     </div></div>`);
+  if (key === "agen-laporan") wireDemoAgents();
+}
+
+function wireDemoAgents() {
+  let current = null;
+  const log = document.getElementById("dlog");
+  document.querySelectorAll("[data-agent]").forEach((b) => b.addEventListener("click", () => {
+    current = DEMO_AGENTS[Number(b.dataset.agent)];
+    log.innerHTML = `<div class="bubble bot">Halo, saya ${esc(current.n)} (${esc(current.r)}). Silakan bertanya.</div>`;
+    document.getElementById("agentchat").scrollIntoView({ behavior: "smooth", block: "start" });
+  }));
+  document.getElementById("dform").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = e.target.q.value.trim();
+    if (!q) return;
+    if (!current) { log.innerHTML += `<div class="bubble bot">Pilih agen dulu di atas.</div>`; return; }
+    e.target.q.value = "";
+    log.insertAdjacentHTML("beforeend", `<div class="bubble me">${esc(q)}</div><div class="bubble bot">${esc(demoReply(current, q))}</div>`);
+    log.scrollTop = log.scrollHeight;
+  });
 }
 
 /* ---------- router ---------- */
