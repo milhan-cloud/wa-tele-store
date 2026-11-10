@@ -2611,6 +2611,60 @@ function renderLupa() {
   });
 }
 
+
+/* ---------- DEMO: dashboard pemilik dan panel admin (data contoh, tanpa login, tidak menyimpan apa pun) ---------- */
+const DEMO_STORE = { name: "Toko Maju", slug: "toko-maju", location: "Bandung, Indonesia" };
+const DEMO_BANNER = `<div class="panel" style="margin-bottom:18px;border-color:#ffc52e;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+  <span><b>Ini versi demo.</b> Data contoh dari Toko Maju, tidak tersimpan.</span>
+  <a class="btn small" href="#/daftar">Daftar toko sungguhan</a></div>`;
+
+function demoNav(prefix, active) {
+  const row = (k, l, cls) => `<a href="${prefix}/${k}" class="navrow ${cls}"><span class="navic">${ICON[k] || ""}</span><span class="navtx">${esc(l)}</span></a>`;
+  return `<aside class="side">
+    <div class="sidestore"><span class="avatar sm">TM</span><div><b>${esc(DEMO_STORE.name)}</b><small class="gold">Premium Plan</small></div></div>
+    <nav class="sidenav">${DASH_GROUPS.map((g) => `
+      ${g.heading ? `<div class="grouphead"><b>${esc(g.heading)}</b>${g.sub ? `<span class="gsub">${esc(g.sub)} <em class="nbadge">Baru</em></span>` : ""}</div>` : ""}
+      ${g.items.map(([k, l, kids]) => `
+        ${row(k, l, k === active || (kids || []).some(([ck]) => ck === active) ? "on" : "")}
+        ${kids ? `<div class="subnav">${kids.map(([ck, cl]) => `<a href="${prefix}/${ck}" class="subrow ${ck === active ? "on" : ""}"><span class="dot"></span><span class="navtx">${esc(cl)}</span></a>`).join("")}</div>` : ""}`).join("")}`).join("")}
+    </nav>
+  </aside>`;
+}
+
+function demoPage(key) {
+  const K = [["Pesanan 7 hari", "42"], ["Omzet 7 hari", "Rp 6.820.000"], ["Menunggu tindak lanjut", "5"], ["Stok menipis", "2"]];
+  const orders = [["#INV-20251130-001", "Rina", "Rp 285.000", "Baru", "Shopee"], ["#INV-20251130-002", "Budi", "Rp 199.000", "Diproses", "TikTok Shop"], ["#INV-20251129-003", "Sari", "Rp 320.000", "Selesai", "Web"]];
+  const prods = [["Baseball Cap", "Rp 89.000", "55"], ["Canvas Shoes", "Rp 189.000", "30"], ["Casual T-Shirt", "Rp 119.000", "60"], ["Classic Sneakers", "Rp 329.000", "18"], ["Leather Wallet", "Rp 159.000", "40"], ["Minimal Backpack", "Rp 389.000", "12"], ["Premium Socks", "Rp 39.000", "80"], ["Running Shoes", "Rp 299.000", "24"]];
+  const custs = [["Rina", "0812-xxxx-1111", "6", "Rp 1.240.000", "VIP"], ["Budi", "0813-xxxx-2222", "2", "Rp 380.000", "-"], ["Sari", "0857-xxxx-3333", "4", "Rp 760.000", "VIP"]];
+  if (key === "produk") return `<div class="panel"><h2>Produk (3)</h2><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Nama</th><th>Harga</th><th>Stok</th></tr></thead><tbody>${prods.map((p) => `<tr><td>${esc(p[0])}</td><td>${esc(p[1])}</td><td>${esc(p[2])}</td></tr>`).join("")}</tbody></table></div><p class="muted small">Di versi asli, pemilik bisa menambah produk, mengubah harga, dan mengunggah foto.</p></div>`;
+  if (key === "pesanan") return `<div class="panel"><h2>Pesanan terbaru</h2><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>No.</th><th>Pembeli</th><th>Total</th><th>Sumber</th><th>Status</th></tr></thead><tbody>${orders.map((o) => `<tr><td class="mono">${esc(o[0])}</td><td>${esc(o[1])}</td><td>${esc(o[2])}</td><td>${esc(o[4])}</td><td>${esc(o[3])}</td></tr>`).join("")}</tbody></table></div></div>`;
+  if (key === "pelanggan") return `<div class="panel"><h2>Pelanggan</h2><div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Nama</th><th>Telepon</th><th>Pesanan</th><th>Total belanja</th><th>Status</th></tr></thead><tbody>${custs.map((c) => `<tr><td>${esc(c[0])}</td><td>${esc(c[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${esc(c[4])}</td></tr>`).join("")}</tbody></table></div></div>`;
+  if (key === "agen-distributor") return `<div class="panel"><h2>Harga agen & distributor</h2><p class="muted">Contoh: Canvas Shoes, harga umum Rp 189.000, agen Rp 165.000, distributor Rp 150.000.</p><p class="muted small">Pemilik mengatur password agen dan distributor. Agen membuka halaman harga dengan password itu.</p></div>`;
+  if (key === "agen-laporan") return `<div class="panel"><h2>Laporan pagi</h2><div class="pre">Laporan penjualan kemarin: 6 pesanan, omzet Rp 1.150.000. Stok menipis: Leather Wallet (sisa 4).</div></div>`;
+  if (key === "mp-koneksi" || key.startsWith("mp-")) return `<div class="panel"><h2>${esc(DEMO_LABEL[key] || "Marketplace")}</h2><p class="muted">Contoh tampilan. Koneksi ke marketplace memerlukan izin resmi dari platform.</p></div>`;
+  if (key === "promosi") return `<div class="panel"><h2>Draf promo</h2><div class="pre">Promo akhir pekan: diskon 20% untuk semua sepatu. Berlaku Sabtu dan Minggu.</div></div>`;
+  if (key === "asisten") return `<div class="panel"><h2>Asisten AI</h2><p class="muted">Pemilik bertanya, agen menjawab dengan data toko. Contoh pertanyaan: "Produk apa yang paling laku minggu ini?"</p></div>`;
+  return `<div class="panel"><h2>Pengaturan toko</h2><p class="muted">Profil toko, kurir dan ongkir, metode pembayaran, banner, username, dan password diatur di sini.</p></div>`;
+}
+const DEMO_LABEL = {};
+DASH_GROUPS.forEach((g) => g.items.forEach(([k, l, kids]) => { DEMO_LABEL[k] = l; (kids || []).forEach(([ck, cl]) => (DEMO_LABEL[ck] = cl)); }));
+
+function renderDemoPemilik(page) {
+  const key = DEMO_LABEL[page] ? page : "produk";
+  setView(`
+    ${DEMO_BANNER}
+    <div class="store-head"><span class="avatar">TM</span><div><h1>${esc(DEMO_STORE.name)}</h1><div class="muted">Dashboard pemilik · demo · <a href="#/toko/toko-maju" style="color:var(--gold-2)">lihat toko publik</a></div></div></div>
+    <div class="dash">${demoNav("#/demo/pemilik", key)}<div id="dashbody">
+      <div class="kpis">
+        <div class="kpi"><span>Pesanan 7 hari</span><b>42</b></div>
+        <div class="kpi"><span>Omzet 7 hari</span><b>Rp 6.820.000</b></div>
+        <div class="kpi"><span>Menunggu tindak lanjut</span><b>5</b></div>
+        <div class="kpi"><span>Stok menipis</span><b>2</b></div>
+      </div>
+      <div style="margin-top:18px">${demoPage(key)}</div>
+    </div></div>`);
+}
+
 /* ---------- router ---------- */
 async function route() {
   updateCartCount();
@@ -2628,6 +2682,7 @@ async function route() {
     if (parts[0] === "admin") return renderAdmin();
     if (parts[0] === "masuk") return renderMasuk();
     if (parts[0] === "lupa") return renderLupa();
+    if (parts[0] === "demo") return renderDemoPemilik(parts[2] || "produk");
     if (parts[0] === "keranjang") return renderCart(null);
     if (parts[0] === "toko" && parts[1]) {
       mountChat(parts[1]);
